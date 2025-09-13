@@ -130,36 +130,52 @@ export default function AuthPage() {
     <div className="min-h-screen flex">
       {/* Left Panel - Sage Green with Cafeteria Background */}
       <div className="hidden lg:flex lg:w-2/5 relative overflow-hidden" style={{backgroundColor: '#9CAF88'}}>
-        {/* Background Image with Opacity */}
+        {/* Background Image with Less Opacity */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-30"
+          className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{backgroundImage: `url(${cafeteriaBg})`}}
         ></div>
-        <div className="absolute inset-0" style={{backgroundColor: 'rgba(156, 175, 136, 0.7)'}}></div>
+        <div className="absolute inset-0" style={{backgroundColor: 'rgba(156, 175, 136, 0.8)'}}></div>
+        
+        {/* Intro Content */}
+        <div className="relative z-10 flex flex-col justify-center items-center p-12 text-center">
+          <div className="text-white space-y-6 max-w-sm">
+            <h1 className="text-4xl font-bold leading-tight">Welcome to USTP Cafeteria</h1>
+            <p className="text-xl text-white/90">Your gateway to efficient food service management</p>
+            <div className="space-y-3 text-white/80">
+              <p className="flex items-center justify-center space-x-2">
+                <span className="w-2 h-2 bg-white/60 rounded-full"></span>
+                <span>Streamlined ordering system</span>
+              </p>
+              <p className="flex items-center justify-center space-x-2">
+                <span className="w-2 h-2 bg-white/60 rounded-full"></span>
+                <span>Real-time inventory tracking</span>
+              </p>
+              <p className="flex items-center justify-center space-x-2">
+                <span className="w-2 h-2 bg-white/60 rounded-full"></span>
+                <span>Staff coordination tools</span>
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Right Panel - Authentication Forms */}
-      <div className="flex-1 lg:w-3/5 flex items-center justify-center p-6 lg:p-12 bg-gray-50">
+      <div className="flex-1 lg:w-3/5 flex flex-col items-center justify-center p-6 lg:p-12 bg-gray-50">
         <div className="w-full max-w-md">
-          {/* Mobile Logo - Only show on mobile */}
-          <div className="lg:hidden text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4">
+          {/* Logo and Header - Outside the auth box */}
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 mx-auto mb-4">
               <img src={ustpLogo} alt="USTP Logo" className="w-full h-full object-contain" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-1">USTP Cafeteria</h1>
-            <p className="text-gray-600">Staff Portal</p>
+            <p className="text-gray-600 text-sm mb-6">Staff Portal - Food Ordering System</p>
           </div>
 
-          {/* Auth Card */}
+          {/* Auth Card - Only covers authentication */}
           <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-8">
-            {/* Logo and Header - Always visible at top of form */}
+            {/* Staff Access Header */}
             <div className="text-center mb-8">
-              <div className="w-20 h-20 mx-auto mb-4">
-                <img src={ustpLogo} alt="USTP Logo" className="w-full h-full object-contain" />
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">USTP Cafeteria</h1>
-              <p className="text-gray-600 text-sm mb-6">Staff Portal - Food Ordering System</p>
-              
               <h2 className="text-xl font-semibold text-gray-900 mb-2">Staff Access</h2>
               <p className="text-gray-600 text-sm">Sign in to manage food orders and inventory</p>
             </div>
@@ -177,11 +193,13 @@ export default function AuthPage() {
                 onMouseEnter={(e) => {
                   if (authMode !== 'signin') {
                     e.currentTarget.style.backgroundColor = 'rgba(54, 87, 10, 0.5)';
+                    e.currentTarget.style.color = 'white';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (authMode !== 'signin') {
                     e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#6b7280';
                   }
                 }}
                 data-testid="tab-signin"
@@ -199,11 +217,13 @@ export default function AuthPage() {
                 onMouseEnter={(e) => {
                   if (authMode !== 'register') {
                     e.currentTarget.style.backgroundColor = 'rgba(54, 87, 10, 0.5)';
+                    e.currentTarget.style.color = 'white';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (authMode !== 'register') {
                     e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#6b7280';
                   }
                 }}
                 data-testid="tab-register"
