@@ -9,10 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Mail, Lock, User, IdCard, Key, University, Utensils, BarChart3, Users } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, IdCard, Key, University, Utensils, BarChart3, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import cafeteriaBg from "@/assets/cafeteria-bg.jpg";
+import ustpLogo from "@/assets/ustp-logo.png";
 
-type AuthMode = 'signin' | 'register' | 'forgot';
+type AuthMode = 'signin' | 'register';
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
@@ -23,6 +26,7 @@ export default function AuthPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [showForgotModal, setShowForgotModal] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -114,7 +118,8 @@ export default function AuthPage() {
         title: "Reset Link Sent",
         description: "Check your email for password reset instructions.",
       });
-      setAuthMode('signin');
+      setShowForgotModal(false);
+      forgotForm.reset();
     }, 1000);
   };
 
@@ -124,47 +129,43 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-2/5 bg-ustp-green relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-ustp-green to-ustp-green/80"></div>
+      {/* Left Panel - Branding with Background Image */}
+      <div className="hidden lg:flex lg:w-2/5 bg-emerald-600 relative overflow-hidden">
+        {/* Background Image with Opacity */}
+        <div className="absolute inset-0 bg-emerald-600"></div>
+        <div 
+          className="absolute inset-0 opacity-20 bg-cover bg-center"
+          style={{ backgroundImage: `url(${cafeteriaBg})` }}
+        ></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/90 to-emerald-700/90"></div>
+        
         <div className="relative z-10 flex flex-col justify-center items-center p-12 text-center">
-          <div className="mb-8">
-            {/* USTP Logo */}
-            <div className="w-24 h-24 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-lg">
-              <div className="w-20 h-20 bg-ustp-green/20 rounded-full flex items-center justify-center">
-                <University className="text-ustp-green text-2xl" />
-              </div>
-            </div>
-            <h1 className="text-3xl font-bold text-white mb-2">USTP Cafeteria</h1>
-            <p className="text-white/80 text-lg">Staff Portal - Food Ordering System</p>
-          </div>
-          
-          <div className="space-y-6 text-white/90 max-w-md">
+          <div className="space-y-6 text-white/95 max-w-md">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                <Utensils className="text-xl" />
+              <div className="w-12 h-12 bg-white/25 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                <Utensils className="text-xl text-white" />
               </div>
               <div className="text-left">
-                <h3 className="font-semibold">Order Management</h3>
-                <p className="text-sm opacity-80">Process and track food orders</p>
+                <h3 className="font-semibold text-white drop-shadow-sm">Order Management</h3>
+                <p className="text-sm text-white/90 drop-shadow-sm">Process and track food orders</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                <BarChart3 className="text-xl" />
+              <div className="w-12 h-12 bg-white/25 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                <BarChart3 className="text-xl text-white" />
               </div>
               <div className="text-left">
-                <h3 className="font-semibold">Inventory Control</h3>
-                <p className="text-sm opacity-80">Monitor stock and supplies</p>
+                <h3 className="font-semibold text-white drop-shadow-sm">Inventory Control</h3>
+                <p className="text-sm text-white/90 drop-shadow-sm">Monitor stock and supplies</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                <Users className="text-xl" />
+              <div className="w-12 h-12 bg-white/25 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                <Users className="text-xl text-white" />
               </div>
               <div className="text-left">
-                <h3 className="font-semibold">Staff Coordination</h3>
-                <p className="text-sm opacity-80">Collaborate with team members</p>
+                <h3 className="font-semibold text-white drop-shadow-sm">Staff Coordination</h3>
+                <p className="text-sm text-white/90 drop-shadow-sm">Collaborate with team members</p>
               </div>
             </div>
           </div>
@@ -456,14 +457,14 @@ export default function AuthPage() {
                     data-testid="checkbox-terms"
                   />
                   <Label htmlFor="terms-agreement" className="text-sm text-muted-foreground leading-5">
-                    I agree to the <button type="button" className="text-ustp-green hover:text-ustp-green/80">Terms of Service</button> and{" "}
-                    <button type="button" className="text-ustp-green hover:text-ustp-green/80">Privacy Policy</button>
+                    I agree to the <button type="button" className="text-emerald-600 hover:text-emerald-700 transition-colors">Terms of Service</button> and{" "}
+                    <button type="button" className="text-emerald-600 hover:text-emerald-700 transition-colors">Privacy Policy</button>
                   </Label>
                 </div>
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-ustp-green text-white hover:bg-ustp-green/90"
+                  className="w-full bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
                   disabled={registerMutation.isPending}
                   data-testid="button-register-submit"
                 >
@@ -472,55 +473,56 @@ export default function AuthPage() {
               </form>
             )}
 
-            {/* Forgot Password Form */}
-            {authMode === 'forgot' && (
-              <form onSubmit={forgotForm.handleSubmit(handleForgotPassword)} className="space-y-6" data-testid="form-forgot">
-                <div className="text-center mb-6">
-                  <Key className="text-ustp-green text-3xl mb-4 mx-auto" />
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Reset Password</h3>
-                  <p className="text-muted-foreground text-sm">Enter your email address and we'll send you a link to reset your password.</p>
-                </div>
-
-                <div>
-                  <Label htmlFor="forgot-email" className="block text-sm font-medium text-foreground mb-2">
-                    Email Address
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input 
-                      id="forgot-email"
-                      type="email" 
-                      placeholder="staff@ustp.edu.ph"
-                      className="pl-10"
-                      {...forgotForm.register("email")}
-                      data-testid="input-forgot-email"
-                    />
+            {/* Forgot Password Modal */}
+            <Dialog open={showForgotModal} onOpenChange={setShowForgotModal}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Key className="text-emerald-600 h-5 w-5" />
+                    Reset Password
+                  </DialogTitle>
+                  <DialogDescription>
+                    Enter your email address and we'll send you a link to reset your password.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={forgotForm.handleSubmit(handleForgotPassword)} className="space-y-4">
+                  <div>
+                    <Label htmlFor="modal-forgot-email" className="block text-sm font-medium text-foreground mb-2">
+                      Email Address
+                    </Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                      <Input 
+                        id="modal-forgot-email"
+                        type="email" 
+                        placeholder="staff@ustp.edu.ph"
+                        className="pl-10"
+                        {...forgotForm.register("email")}
+                      />
+                    </div>
+                    {forgotForm.formState.errors.email && (
+                      <p className="text-sm text-destructive mt-1">{forgotForm.formState.errors.email.message}</p>
+                    )}
                   </div>
-                  {forgotForm.formState.errors.email && (
-                    <p className="text-sm text-destructive mt-1">{forgotForm.formState.errors.email.message}</p>
-                  )}
-                </div>
-
-                <div className="flex space-x-3">
-                  <Button 
-                    type="button" 
-                    variant="secondary"
-                    onClick={() => setAuthMode('signin')}
-                    className="flex-1"
-                    data-testid="button-back-to-signin"
-                  >
-                    Back to Sign In
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    className="flex-1 bg-ustp-green text-white hover:bg-ustp-green/90"
-                    data-testid="button-forgot-submit"
-                  >
-                    Send Reset Link
-                  </Button>
-                </div>
-              </form>
-            )}
+                  <div className="flex gap-3 pt-4">
+                    <Button 
+                      type="button" 
+                      variant="secondary"
+                      onClick={() => setShowForgotModal(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      className="flex-1 bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+                    >
+                      Send Reset Link
+                    </Button>
+                  </div>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
 
           {/* Footer */}
