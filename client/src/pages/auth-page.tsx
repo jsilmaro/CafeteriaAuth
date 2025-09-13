@@ -186,14 +186,23 @@ export default function AuthPage() {
 
           {/* Auth Card */}
           <div className="bg-card border border-border rounded-xl shadow-sm p-8">
+            {/* USTP Logo and Branding - moved from left panel */}
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-foreground mb-2">Staff Access</h2>
+              <div className="w-20 h-20 mx-auto mb-4">
+                <img 
+                  src={ustpLogo} 
+                  alt="USTP Logo" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <h1 className="text-2xl font-bold text-foreground mb-1">USTP Cafeteria</h1>
+              <p className="text-emerald-600 font-medium mb-4">Staff Portal - Food Ordering System</p>
+              <h2 className="text-xl font-semibold text-foreground mb-2">Staff Access</h2>
               <p className="text-muted-foreground">Sign in to manage food orders and inventory</p>
             </div>
 
-            {/* Auth Tabs */}
-            {authMode !== 'forgot' && (
-              <div className="flex mb-8 bg-muted rounded-lg p-1">
+            {/* Auth Tabs with Hover Effects */}
+            <div className="flex mb-8 bg-muted rounded-lg p-1">
                 <button 
                   onClick={() => setAuthMode('signin')}
                   className={cn(
@@ -218,8 +227,7 @@ export default function AuthPage() {
                 >
                   Register
                 </button>
-              </div>
-            )}
+            </div>
 
             {/* Sign In Form */}
             {authMode === 'signin' && (

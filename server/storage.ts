@@ -16,9 +16,6 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  getUserByUsername(username: string) {
-    throw new Error("Method not implemented.");
-  }
   sessionStore: session.SessionStore;
 
   constructor() {
