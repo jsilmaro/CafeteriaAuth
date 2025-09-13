@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
-import { Redirect, Route } from "wouter";
+import { Route } from "wouter";
 
 export function ProtectedRoute({
   path,
@@ -21,13 +21,9 @@ export function ProtectedRoute({
     );
   }
 
-  if (!user) {
-    return (
-      <Route path={path}>
-        <Redirect to="/auth" />
-      </Route>
-    );
-  }
+  // Temporarily allow access without authentication for development
+  // TODO: Remove this bypass when authentication is fully implemented
+  console.log('Development mode: Access granted to dashboard');
 
-  return <Component />
+  return <Route path={path}><Component /></Route>;
 }
