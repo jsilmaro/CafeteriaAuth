@@ -19,11 +19,12 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { Link, useLocation } from "wouter";
 import ustpLogo from "@/assets/ustp-logo.png";
 
 export default function HomePage() {
   const { user, logoutMutation } = useAuth();
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [location] = useLocation();
 
   // Temporary mock user if no user is logged in
   const mockUser = {
@@ -40,12 +41,12 @@ export default function HomePage() {
 
   // Navigation items
   const navItems = [
-    { id: "dashboard", label: "Seller Dashboard", icon: LayoutDashboard, active: true },
-    { id: "orders", label: "Order Management", icon: ShoppingCart },
-    { id: "inventory", label: "Cafeteria Inventory", icon: Package },
-    { id: "feedback", label: "Customer Feedback", icon: MessageSquare },
-    { id: "analytics", label: "Analytics", icon: BarChart3 },
-    { id: "settings", label: "Settings", icon: Settings },
+    { id: "dashboard", label: "Seller Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+    { id: "orders", label: "Order Management", icon: ShoppingCart, path: "/orders" },
+    { id: "inventory", label: "Cafeteria Inventory", icon: Package, path: "/inventory" },
+    { id: "feedback", label: "Customer Feedback", icon: MessageSquare, path: "/feedback" },
+    { id: "analytics", label: "Analytics", icon: BarChart3, path: "/analytics" },
+    { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
   ];
 
   // Dashboard stats
@@ -95,23 +96,23 @@ export default function HomePage() {
           <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = item.id === activeTab;
+              const isActive = location === item.path;
               return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={cn(
-                    "w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors",
-                    isActive 
-                      ? "text-white" 
-                      : "text-gray-700 hover:bg-gray-100"
-                  )}
-                  style={isActive ? {backgroundColor: '#9CAF88'} : {}}
-                  data-testid={`nav-${item.id}`}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span className="text-sm">{item.label}</span>
-                </button>
+                <Link key={item.id} href={item.path}>
+                  <button
+                    className={cn(
+                      "w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors",
+                      isActive 
+                        ? "text-white" 
+                        : "text-gray-700 hover:bg-gray-100"
+                    )}
+                    style={isActive ? {backgroundColor: '#9CAF88'} : {}}
+                    data-testid={`nav-${item.id}`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span className="text-sm">{item.label}</span>
+                  </button>
+                </Link>
               );
             })}
           </nav>
@@ -158,7 +159,7 @@ export default function HomePage() {
         {/* Dashboard Content */}
         <div className="p-6">
           {/* Page Header */}
-          <div className="mb-8 p-6 rounded-lg text-white" style={{backgroundColor: '#9CAF88'}}>
+          <div className="mb-8 p-6 rounded-lg text-white" style={{backgroundColor: 'var(--accent-green)'}}>
             <h2 className="text-2xl font-semibold">Seller Dashboard</h2>
             <p className="text-white/90 mt-1">Manage your cafeteria operations and track performance</p>
           </div>

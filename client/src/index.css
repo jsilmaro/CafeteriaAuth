@@ -54,6 +54,7 @@
   --ustp-green: hsl(95 25% 65%);
   --ustp-green-dark: hsl(95 25% 55%);
   --ustp-gray: hsl(210 20% 98%);
+  --accent-green: #6A972E;
 }
 
 .dark {

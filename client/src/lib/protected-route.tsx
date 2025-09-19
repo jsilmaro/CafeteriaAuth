@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
-import { Route } from "wouter";
+import { Route, useLocation } from "wouter";
 
 export function ProtectedRoute({
   path,
@@ -10,6 +10,7 @@ export function ProtectedRoute({
   component: () => React.JSX.Element;
 }) {
   const { user, isLoading } = useAuth();
+  const [, navigate] = useLocation();
 
   if (isLoading) {
     return (
@@ -21,9 +22,16 @@ export function ProtectedRoute({
     );
   }
 
-  // Temporarily allow access without authentication for development
-  // TODO: Remove this bypass when authentication is fully implemented
-  console.log('Development mode: Access granted to dashboard');
-
-  return <Route path={path}><Component /></Route>;
+  return (
+    <Route path={path}>
+      {user ? (
+        <Component />
+      ) : (
+        (() => {
+          navigate('/');
+          return null;
+        })()
+      )}
+    </Route>
+  );
 }
