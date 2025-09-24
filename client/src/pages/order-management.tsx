@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Filter, Search, Loader2 } from 'lucide-react';
-import { type Order } from '@shared/schema';
+import { type Order } from '../types/schema';
 import { useOrders } from '@/hooks/use-orders';
 import { cn } from "@/lib/utils";
 import SharedSidebar from "@/components/shared-sidebar";

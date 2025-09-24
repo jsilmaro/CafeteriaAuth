@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertUserSchema, loginSchema, forgotPasswordSchema, type InsertUser, type LoginData, type ForgotPasswordData } from "@shared/schema";
+import { insertUserSchema, loginSchema, forgotPasswordSchema, type InsertUser, type LoginData, type ForgotPasswordData } from "../types/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +31,7 @@ export default function AuthPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      setLocation('/');
+      setLocation('/dashboard');
     }
   }, [user, setLocation]);
 

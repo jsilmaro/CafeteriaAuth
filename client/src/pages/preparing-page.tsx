@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SharedSidebar from "@/components/shared-sidebar";
-import { type Order } from "@shared/schema";
+import { type Order } from "../types/schema";
 
 export default function PreparingPage() {
   const [searchQuery, setSearchQuery] = useState('');
