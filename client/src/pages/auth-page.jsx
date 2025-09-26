@@ -506,7 +506,7 @@ export default function AuthPage() {
             </div>
             <DialogTitle className="text-center">Reset Password</DialogTitle>
             <DialogDescription className="text-center">
-              Enter your email address and we'll send you a link to reset your password.
+              Enter your email address and we&apos;ll send you a link to reset your password.
             </DialogDescription>
           </DialogHeader>
           

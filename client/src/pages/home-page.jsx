@@ -13,26 +13,16 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  Clock,
   Users,
   DollarSign
 } from "lucide-react";
 import { cn } from "../lib/utils";
-import { useState } from "react";
 import { Link, useLocation } from "wouter";
 
 export default function HomePage() {
-  const { user, logoutMutation } = useAuth();
+  const { logoutMutation } = useAuth();
   const [location] = useLocation();
 
-  // Temporary mock user if no user is logged in
-  const mockUser = {
-    fullname: "Admin User",
-    staffId: "STAFF001",
-    email: "admin@ustp.edu.ph"
-  };
-
-  const currentUser = user || mockUser;
 
   const handleLogout = () => {
     logoutMutation.mutate();

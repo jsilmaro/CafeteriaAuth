@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 export default function SharedSidebar({ children }) {
-  const { user, logoutMutation } = useAuth();
+  const { logoutMutation } = useAuth();
   const [location] = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -34,14 +34,7 @@ export default function SharedSidebar({ children }) {
     localStorage.setItem('sidebar-collapsed', JSON.stringify(newState));
   };
 
-  // Temporary mock user if no user is logged in
-  const mockUser = {
-    fullname: "Admin User",
-    staffId: "STAFF001",
-    email: "admin@ustp.edu.ph"
-  };
 
-  const currentUser = user || mockUser;
 
   const handleLogout = () => {
     logoutMutation.mutate();

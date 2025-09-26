@@ -1,57 +1,31 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Filter, Search, Loader2 } from 'lucide-react';
-import { type Order } from '../types/schema';
-import { useOrders } from '@/hooks/use-orders';
-import { cn } from "@/lib/utils";
-import SharedSidebar from "@/components/shared-sidebar";
+import { useState } from "react";
+import { useOrders } from "../hooks/use-orders";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Card, CardContent } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Search, Filter, Loader2 } from "lucide-react";
+import SharedSidebar from "../components/shared-sidebar";
 
-export default function OrderManagementPage() {
+export default function PreparingPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('Pending');
+  const [statusFilter, setStatusFilter] = useState('Preparing');
   
   const { orders, isLoading, error, updateOrderMutation, refetch } = useOrders();
 
   const statusOptions = ['Pending', 'Preparing', 'Ready', 'Completed', 'Cancelled'];
 
-  const handleAccept = (orderId: string) => {
+  const handleMarkAsReady = (orderId) => {
     updateOrderMutation.mutate({ 
       id: orderId, 
-      updates: { status: 'Preparing' } 
+      updates: { status: 'Ready' } 
     });
   };
 
-  const handleReject = (orderId: string) => {
-    updateOrderMutation.mutate({ 
-      id: orderId, 
-      updates: { status: 'Cancelled' } 
-    });
-  };
-
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'Pending':
-        return 'default';
-      case 'Preparing':
-        return 'secondary';
-      case 'Ready':
-        return 'outline';
-      case 'Completed':
-        return 'default';
-      case 'Cancelled':
-        return 'destructive';
-      default:
-        return 'default';
-    }
-  };
-
-  // Filter orders by status and search query
-  const filteredOrders = orders.filter(order => {
+  // Filter orders based on search query and status
+  const filteredOrders = orders.filter((order) => {
     const matchesStatus = statusFilter === 'All' || order.status === statusFilter;
-    const matchesSearch = !searchQuery || 
+    const matchesSearch = 
       order.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.studentId.includes(searchQuery) ||
       order.id.toLowerCase().includes(searchQuery.toLowerCase());
@@ -100,7 +74,7 @@ export default function OrderManagementPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 pr-10 rounded-full"
-                data-testid="search-orders-input"
+                data-testid="search-preparing-orders-input"
               />
               <Button 
                 variant="ghost" 
@@ -143,7 +117,7 @@ export default function OrderManagementPage() {
         </div>
 
         {/* Orders List */}
-        <div className="space-y-4" data-testid="orders-list">
+        <div className="space-y-4" data-testid="preparing-orders-list">
           {filteredOrders.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               No orders found matching your criteria.
@@ -152,85 +126,84 @@ export default function OrderManagementPage() {
             filteredOrders.map((order) => (
             <Card key={order.id} className="bg-white shadow-sm rounded-lg border">
               <CardContent className="p-6">
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between">
+                  {/* Left side - Order details */}
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900">{order.id}</h3>
+                    {/* Order ID and Status */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <h3 className="text-xl font-bold text-gray-900">{order.id}</h3>
                       <Badge 
-                        className="bg-orange-100 text-orange-800 font-medium px-3 py-1 rounded-full text-xs"
-                        data-testid={`order-status-${order.status.toLowerCase()}`}
+                        className="bg-orange-100 text-orange-800 border-orange-200 font-medium px-3 py-1"
+                        data-testid={`status-badge-${order.id}`}
                       >
                         {order.status.toUpperCase()}
                       </Badge>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-12">
+                    <div className="grid grid-cols-2 gap-8">
+                      {/* Customer Details */}
                       <div>
-                        <h4 className="font-semibold text-gray-900 mb-4">Customer Details</h4>
-                        <div className="space-y-3">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-3">Customer Details</h4>
+                        <div className="space-y-2">
                           <div>
-                            <p className="text-gray-600 text-sm mb-1">Student Name</p>
+                            <p className="text-sm text-gray-600">Student Name</p>
                             <p className="font-medium text-gray-900">{order.studentName}</p>
                           </div>
                           <div>
-                            <p className="text-gray-600 text-sm mb-1">Student ID</p>
+                            <p className="text-sm text-gray-600">Student ID</p>
                             <p className="font-medium text-gray-900">{order.studentId}</p>
                           </div>
                           <div>
-                            <p className="text-gray-600 text-sm mb-1">Payment Method</p>
-                            <Badge variant="outline" className="bg-gray-100 text-gray-700 border-gray-300 font-normal">
+                            <p className="text-sm text-gray-600">Payment Method</p>
+                            <Badge variant="outline" className="mt-1">
                               {order.paymentMethod}
                             </Badge>
                           </div>
                         </div>
                       </div>
 
+                      {/* Order Items */}
                       <div>
-                        <h4 className="font-semibold text-gray-900 mb-4">Order Items</h4>
-                        <div className="space-y-2 mb-4">
-                          {order.items.map((item, idx) => (
-                            <div key={idx} className="flex justify-between text-sm">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-3">Order Items</h4>
+                        <div className="space-y-2">
+                          {order.items.map((item, index) => (
+                            <div key={index} className="flex justify-between">
                               <span className="text-gray-700">{item.name} x{item.quantity}</span>
-                              <span className="font-medium text-gray-900">₱{item.price.toFixed(2)}</span>
+                              <span className="font-medium">₱{item.price.toFixed(2)}</span>
                             </div>
                           ))}
-                        </div>
-                        <div className="border-t border-gray-200 pt-3">
-                          <div className="flex justify-between text-base font-semibold">
-                            <span className="text-gray-900">Total Amount</span>
-                            <span className="text-gray-900">₱{order.total.toFixed(2)}</span>
+                          <div className="border-t pt-2 mt-3">
+                            <div className="flex justify-between font-semibold">
+                              <span>Total Amount</span>
+                              <span>₱{order.total.toFixed(2)}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="ml-12 text-right">
-                    <div className="mb-4">
+                  {/* Right side - Times and Actions */}
+                  <div className="ml-8 text-right flex flex-col justify-between min-w-[200px]">
+                    <div className="mb-8">
                       <p className="text-sm text-gray-600 mb-1">Pickup Time</p>
                       <p className="font-medium text-gray-900">{order.pickupTime}</p>
                     </div>
+                    
                     <div className="mb-8">
                       <p className="text-sm text-gray-600 mb-1">Order Time</p>
                       <p className="font-medium text-gray-900">{order.orderTime}</p>
                     </div>
-                    {order.status === 'Pending' && (
-                      <div className="flex gap-3">
+                    
+                    {order.status === 'Preparing' && (
+                      <div>
                         <Button 
-                          onClick={() => handleAccept(order.id)}
-                          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium"
-                          data-testid={`accept-order-${order.id}`}
+                          onClick={() => handleMarkAsReady(order.id)}
+                          className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-medium"
+                          data-testid={`mark-ready-order-${order.id}`}
                           disabled={updateOrderMutation.isPending}
                         >
-                          {updateOrderMutation.isPending ? 'Processing...' : 'Accept'}
-                        </Button>
-                        <Button 
-                          onClick={() => handleReject(order.id)}
-                          className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium"
-                          data-testid={`reject-order-${order.id}`}
-                          disabled={updateOrderMutation.isPending}
-                        >
-                          {updateOrderMutation.isPending ? 'Processing...' : 'Reject'}
+                          {updateOrderMutation.isPending ? 'Processing...' : 'Mark as Ready'}
                         </Button>
                       </div>
                     )}

@@ -5,7 +5,6 @@ import { Badge } from '../components/ui/badge';
 import { Card, CardContent } from '../components/ui/card';
 import { Filter, Search, Loader2 } from 'lucide-react';
 import { useOrders } from '../hooks/use-orders';
-import { cn } from "../lib/utils";
 import SharedSidebar from "../components/shared-sidebar";
 
 export default function OrderManagementPage() {

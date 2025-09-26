@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "./use-toast";
 
 // Mock orders data
@@ -66,7 +66,7 @@ const initialMockOrders = [
 export function useOrders() {
   const { toast } = useToast();
   const [orders, setOrders] = useState(initialMockOrders);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const refetch = () => {
