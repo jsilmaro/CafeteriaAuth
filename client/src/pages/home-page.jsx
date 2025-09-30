@@ -1,48 +1,24 @@
 import { useAuth } from "../hooks/use-auth";
-import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { Button } from "../components/ui/button";
 import { 
   Search, 
   Filter, 
-  LayoutDashboard,
-  ShoppingCart,
-  Package,
-  MessageSquare,
-  BarChart3,
-  Settings,
-  LogOut,
   Users,
   DollarSign
 } from "lucide-react";
 import { cn } from "../lib/utils";
-import { Link, useLocation } from "wouter";
+import SharedSidebar from "../components/shared-sidebar";
 
 export default function HomePage() {
-  const { logoutMutation } = useAuth();
-  const [location] = useLocation();
-
-
-  const handleLogout = () => {
-    logoutMutation.mutate();
-  };
-
-  // Navigation items
-  const navItems = [
-    { id: "dashboard", label: "Seller Dashboard", icon: LayoutDashboard, path: "/dashboard" },
-    { id: "orders", label: "Order Management", icon: ShoppingCart, path: "/orders" },
-    { id: "inventory", label: "Cafeteria Inventory", icon: Package, path: "/inventory" },
-    { id: "feedback", label: "Customer Feedback", icon: MessageSquare, path: "/feedback" },
-    { id: "analytics", label: "Analytics", icon: BarChart3, path: "/analytics" },
-    { id: "settings", label: "Settings", icon: Settings, path: "/settings" },
-  ];
 
   // Dashboard stats
   const stats = [
     { label: "Today's Revenue", value: "₱2,450", icon: DollarSign },
-    { label: "Orders Today", value: "23", icon: ShoppingCart },
-    { label: "Avg Order Value", value: "₱106", icon: BarChart3 },
+    { label: "Orders Today", value: "23", icon: Users },
+    { label: "Avg Order Value", value: "₱106", icon: DollarSign },
     { label: "Active Customers", value: "147", icon: Users },
   ];
 
@@ -66,63 +42,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-sm flex flex-col">
-        {/* Logo Header */}
-        <div className="p-6" style={{backgroundColor: '#9CAF88'}}>
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-              <span className="text-green-700 font-bold text-lg">F</span>
-            </div>
-            <span className="text-white font-semibold text-lg">FASPeCC</span>
-          </div>
-        </div>
-
-        {/* Management Section */}
-        <div className="p-4">
-          <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Management</p>
-          <nav className="space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location === item.path;
-              return (
-                <Link key={item.id} href={item.path}>
-                  <button
-                    className={cn(
-                      "w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors",
-                      isActive 
-                        ? "text-white" 
-                        : "text-gray-700 hover:bg-gray-100"
-                    )}
-                    style={isActive ? {backgroundColor: '#9CAF88'} : {}}
-                    data-testid={`nav-${item.id}`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span className="text-sm">{item.label}</span>
-                  </button>
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Sign Out */}
-        <div className="mt-auto p-4">
-          <button
-            onClick={handleLogout}
-            disabled={logoutMutation.isPending}
-            className="w-full flex items-center space-x-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-            data-testid="button-logout"
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="text-sm">{logoutMutation.isPending ? "Signing Out..." : "Sign Out"}</span>
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+    <SharedSidebar>
         {/* Top Header */}
         <header className="bg-white shadow-sm border-b">
           <div className="px-6 py-4 flex items-center justify-between">
@@ -217,7 +137,6 @@ export default function HomePage() {
             </CardContent>
           </Card>
         </div>
-      </main>
-    </div>
+    </SharedSidebar>
   );
 }
