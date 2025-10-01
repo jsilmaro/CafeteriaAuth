@@ -56,19 +56,19 @@ export function AuthProvider({ children }) {
         setIsLoading(true);
         const res = await api.post("/auth/register-staff", formData);
 
-        const { token, user } = res.data;
-
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
-        setUser(user);
-
         toast({
           title: "Account Created!",
           description:
+            res.data?.message ||
             "Your staff account has been registered. Please wait for admin approval before logging in.",
         });
 
-        // ⚠️ Don’t redirect — approval required
+        // Clear any existing auth state just in case
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setUser(null);
+
+        // Redirect to home or login
         window.location.href = "/";
       } catch (err) {
         console.error("Register error:", err);
