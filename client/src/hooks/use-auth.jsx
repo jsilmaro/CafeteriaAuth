@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useToast } from "./use-toast";
+import api from "../lib/api"; // ✅ axios instance
 
 const AuthContext = createContext(null);
 
@@ -8,126 +9,130 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock login mutation
+  /**
+   * ✅ STAFF / ADMIN LOGIN
+   */
   const loginMutation = {
-    mutate: async (credentials) => {
-      setIsLoading(true);
-      // TODO: backend integration - replace with actual API call
-      console.log('Login attempt:', credentials);
-      
-      // Simulate API delay
-      setTimeout(() => {
-        // Mock successful login - align with Prisma schema
-        // Determine role based on email or other factors
-        let userRole = "staff"; // Default role
-        let fullName = "Staff User";
-        
-        if (credentials.email.includes('admin') || credentials.email.includes('administrator')) {
-          userRole = "admin";
-          fullName = "Admin User";
-        }
-        
-        const mockUser = {
-          id: "user-1",
-          fullName: fullName,
-          role: userRole,
-          email: credentials.email,
-          emailVerified: true,
-          contact: "+63 912 345 6777",
-          studentId: null,
-          createdAt: new Date().toISOString(),
-          verificationCode: null
-        };
-        setUser(mockUser);
-        setIsLoading(false);
-        
+    mutate: async ({ email, password }) => {
+      try {
+        setIsLoading(true);
+        const res = await api.post("/auth/login-staff", { email, password });
+
+        const { token, user } = res.data;
+
+        // ✅ Save token + user
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        setUser(user);
+
         toast({
           title: "Welcome back!",
-          description: "You have been successfully signed in.",
+          description: `Logged in as ${user.fullName || user.email}`,
         });
-        
-        // Note: Navigation will be handled by useEffect in auth components
-      }, 1000);
+
+        // ✅ Redirect after login
+        window.location.href = "/dashboard";
+      } catch (err) {
+        console.error("Login error:", err);
+        toast({
+          title: "Login failed",
+          description:
+            err.response?.data?.error || "Invalid credentials or server error",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
     },
-    isPending: isLoading
+    isPending: isLoading,
   };
 
-  // Mock register mutation
+  /**
+   * ✅ STAFF REGISTRATION
+   */
   const registerMutation = {
-    mutate: async (userData) => {
-      setIsLoading(true);
-      // TODO: backend integration - replace with actual API call
-      console.log('Register attempt:', userData);
-      
-      // Simulate API delay
-      setTimeout(() => {
-        // Mock successful registration - align with Prisma schema
-        const mockUser = {
-          id: "user-2",
-          fullName: userData.fullName,
-          role: "staff", // This is staff auth, so always staff
-          email: userData.email,
-          emailVerified: false, // Staff need approval
-          contact: userData.contact || null,
-          studentId: null, // Staff don't have studentId
-          createdAt: new Date().toISOString(),
-          verificationCode: "1234" // Staff need verification
-        };
-        setUser(mockUser);
-        setIsLoading(false);
-        
+    mutate: async (formData) => {
+      try {
+        setIsLoading(true);
+        const res = await api.post("/auth/register-staff", formData);
+
         toast({
           title: "Account Created!",
-          description: "Your staff account has been successfully created and is pending admin approval.",
+          description:
+            res.data?.message ||
+            "Your staff account has been registered. Please wait for admin approval before logging in.",
         });
-        
-        // Note: Navigation will be handled by useEffect in auth components
-      }, 1000);
+
+        // Clear any existing auth state just in case
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setUser(null);
+
+        // Redirect to home or login
+        window.location.href = "/";
+      } catch (err) {
+        console.error("Register error:", err);
+        toast({
+          title: "Registration failed",
+          description:
+            err.response?.data?.error || "Something went wrong",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
     },
-    isPending: isLoading
+    isPending: isLoading,
   };
 
-  // Mock logout mutation
+  /**
+   * ✅ LOGOUT
+   */
   const logoutMutation = {
     mutate: () => {
-      // TODO: backend integration - replace with actual API call
-      console.log('Logout attempt');
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
       setUser(null);
+
       toast({
         title: "Logged out",
         description: "You have been successfully logged out.",
       });
+
+      window.location.href = "/";
     },
-    isPending: false
+    isPending: false,
   };
 
-  // Check for existing session on mount
+  /**
+   * ✅ RESTORE SESSION (auto-login from token)
+   */
   useEffect(() => {
-    // TODO: backend integration - check for existing session
-    const mockUser = localStorage.getItem('mockUser');
-    if (mockUser) {
-      setUser(JSON.parse(mockUser));
-    }
-  }, []);
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-  // Save user to localStorage for persistence
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('mockUser', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('mockUser');
-    }
-  }, [user]);
+    (async () => {
+      try {
+        const res = await api.get("/auth/user");
+        setUser(res.data);
+        localStorage.setItem("user", JSON.stringify(res.data));
+      } catch (err) {
+        console.warn("Session restore failed:", err);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setUser(null);
+      }
+    })();
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
         user,
         isLoading,
-        error: null,
         loginMutation,
-        logoutMutation,
         registerMutation,
+        logoutMutation,
       }}
     >
       {children}
