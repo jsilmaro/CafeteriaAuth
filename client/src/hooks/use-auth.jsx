@@ -17,12 +17,29 @@ export function AuthProvider({ children }) {
       
       // Simulate API delay
       setTimeout(() => {
-        // Mock successful login
+        // Mock successful login - align with Prisma schema
+        // Determine role based on email or other factors
+        let userRole = "staff"; // Default role
+        let fullName = "Staff User";
+        
+        if (credentials.email.includes('admin') || credentials.email.includes('administrator')) {
+          userRole = "admin";
+          fullName = "Admin User";
+        } else if (credentials.email.includes('student')) {
+          userRole = "student";
+          fullName = "Student User";
+        }
+        
         const mockUser = {
           id: "user-1",
-          fullname: "Admin User",
-          staffId: "STAFF001",
-          email: credentials.email
+          fullName: fullName,
+          role: userRole,
+          email: credentials.email,
+          emailVerified: true,
+          contact: "+63 912 345 6777",
+          studentId: userRole === "student" ? "2021-12345" : null,
+          createdAt: new Date().toISOString(),
+          verificationCode: null
         };
         setUser(mockUser);
         setIsLoading(false);
@@ -32,8 +49,7 @@ export function AuthProvider({ children }) {
           description: "You have been successfully signed in.",
         });
         
-        // Navigate to dashboard
-        window.location.href = '/dashboard';
+        // Note: Navigation will be handled by useEffect in auth components
       }, 1000);
     },
     isPending: isLoading
@@ -48,23 +64,27 @@ export function AuthProvider({ children }) {
       
       // Simulate API delay
       setTimeout(() => {
-        // Mock successful registration
+        // Mock successful registration - align with Prisma schema
         const mockUser = {
           id: "user-2",
-          fullname: userData.fullname,
-          staffId: userData.staffId,
-          email: userData.email
+          fullName: userData.fullName,
+          role: "staff", // This is staff auth, so always staff
+          email: userData.email,
+          emailVerified: false, // Staff need approval
+          contact: userData.contact || null,
+          studentId: null, // Staff don't have studentId
+          createdAt: new Date().toISOString(),
+          verificationCode: "1234" // Staff need verification
         };
         setUser(mockUser);
         setIsLoading(false);
         
         toast({
           title: "Account Created!",
-          description: "Your staff account has been successfully created.",
+          description: "Your staff account has been successfully created and is pending admin approval.",
         });
         
-        // Navigate to dashboard
-        window.location.href = '/dashboard';
+        // Note: Navigation will be handled by useEffect in auth components
       }, 1000);
     },
     isPending: isLoading

@@ -1,4 +1,4 @@
-import { useAuth } from "../hooks/use-auth";
+// import { useAuth } from "../hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
@@ -22,23 +22,79 @@ export default function HomePage() {
     { label: "Active Customers", value: "147", icon: Users },
   ];
 
-  // Recent orders data
+  // Recent orders data - aligned with Prisma schema
   const recentOrders = [
-    { id: "ORD001", student: "Juan Dela Cruz", studentId: "2021-12345", total: "₱125", date: "2024-09-13", status: "Completed" },
-    { id: "ORD002", student: "Maria Santos", studentId: "2021-12346", total: "₱89", date: "2024-09-13", status: "Pending" },
-    { id: "ORD003", student: "Pedro Garcia", studentId: "2021-12347", total: "₱156", date: "2024-09-13", status: "In Progress" },
-    { id: "ORD004", student: "Ana Rodriguez", studentId: "2021-12348", total: "₱92", date: "2024-09-13", status: "Completed" },
-    { id: "ORD005", student: "Carlos Lopez", studentId: "2021-12349", total: "₱138", date: "2024-09-13", status: "Cancelled" },
+    { 
+      id: "ord-001", 
+      user: { fullName: "Juan Dela Cruz", studentId: "2021-12345" }, 
+      totalPrice: 125, 
+      createdAt: "2024-09-13T10:30:00Z", 
+      status: "picked_up",
+      pickupType: "dine_in",
+      paymentStatus: "paid"
+    },
+    { 
+      id: "ord-002", 
+      user: { fullName: "Maria Santos", studentId: "2021-12346" }, 
+      totalPrice: 89, 
+      createdAt: "2024-09-13T11:15:00Z", 
+      status: "pending",
+      pickupType: "take_out",
+      paymentStatus: "pending"
+    },
+    { 
+      id: "ord-003", 
+      user: { fullName: "Pedro Garcia", studentId: "2021-12347" }, 
+      totalPrice: 156, 
+      createdAt: "2024-09-13T12:00:00Z", 
+      status: "preparing",
+      pickupType: "dine_in",
+      paymentStatus: "cash_on_pickup"
+    },
+    { 
+      id: "ord-004", 
+      user: { fullName: "Ana Rodriguez", studentId: "2021-12348" }, 
+      totalPrice: 92, 
+      createdAt: "2024-09-13T13:45:00Z", 
+      status: "ready",
+      pickupType: "take_out",
+      paymentStatus: "paid"
+    },
+    { 
+      id: "ord-005", 
+      user: { fullName: "Carlos Lopez", studentId: "2021-12349" }, 
+      totalPrice: 138, 
+      createdAt: "2024-09-13T14:20:00Z", 
+      status: "rejected",
+      pickupType: "dine_in",
+      paymentStatus: "pending"
+    },
   ];
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Completed": return "text-green-600 bg-green-100";
-      case "Pending": return "text-yellow-600 bg-yellow-100";
-      case "In Progress": return "text-blue-600 bg-blue-100";
-      case "Cancelled": return "text-red-600 bg-red-100";
+      case "picked_up": return "text-green-600 bg-green-100";
+      case "pending": return "text-yellow-600 bg-yellow-100";
+      case "preparing": return "text-blue-600 bg-blue-100";
+      case "ready": return "text-purple-600 bg-purple-100";
+      case "rejected": return "text-red-600 bg-red-100";
       default: return "text-gray-600 bg-gray-100";
     }
+  };
+
+  const formatStatus = (status) => {
+    switch (status) {
+      case "picked_up": return "Completed";
+      case "pending": return "Pending";
+      case "preparing": return "Preparing";
+      case "ready": return "Ready";
+      case "rejected": return "Rejected";
+      default: return status;
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString();
   };
 
   return (
@@ -117,16 +173,16 @@ export default function HomePage() {
                     {recentOrders.map((order) => (
                       <TableRow key={order.id} className="hover:bg-gray-50">
                         <TableCell className="font-medium">{order.id}</TableCell>
-                        <TableCell>{order.student}</TableCell>
-                        <TableCell>{order.studentId}</TableCell>
-                        <TableCell>{order.total}</TableCell>
-                        <TableCell>{order.date}</TableCell>
+                        <TableCell>{order.user.fullName}</TableCell>
+                        <TableCell>{order.user.studentId}</TableCell>
+                        <TableCell>₱{order.totalPrice}</TableCell>
+                        <TableCell>{formatDate(order.createdAt)}</TableCell>
                         <TableCell>
                           <span className={cn(
                             "px-2 py-1 rounded-full text-xs font-medium",
                             getStatusColor(order.status)
                           )}>
-                            {order.status}
+                            {formatStatus(order.status)}
                           </span>
                         </TableCell>
                       </TableRow>

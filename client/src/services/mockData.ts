@@ -1,82 +1,158 @@
-import { User, Order, InsertUser, InsertOrder } from '../types/schema';
+// Mock data aligned with Prisma schema
 
-// Mock users data
+// Mock users data aligned with Prisma User model
 export const mockUsers = [
   {
     id: "1",
-    fullname: "Admin User",
-    staffId: "STAFF001",
+    role: "admin",
+    fullName: "Admin User",
     email: "admin@ustp.edu.ph",
+    passwordHash: "hashed_password",
+    contact: "+63 912 345 6777",
+    studentId: null,
+    emailVerified: true,
+    verificationCode: null,
     createdAt: "2024-01-01T00:00:00Z",
   },
   {
     id: "2",
-    fullname: "John Doe",
-    staffId: "STAFF002",
+    role: "staff",
+    fullName: "John Doe",
     email: "john@ustp.edu.ph",
+    passwordHash: "hashed_password",
+    contact: "+63 912 345 6789",
+    studentId: null,
+    emailVerified: false,
+    verificationCode: "1234",
     createdAt: "2024-01-02T00:00:00Z",
   },
 ];
 
-// Mock orders data
+// Mock orders data aligned with Prisma Order model
 export const mockOrders = [
   {
     id: "ORD-001",
-    studentName: "Jennie Kim",
-    studentId: "2023300123",
-    items: [
-      { name: "Chicken Adobo", quantity: 1, price: 85.0 },
-      { name: "Rice", quantity: 1, price: 15.0 },
-      { name: "Lumpia", quantity: 1, price: 45.0 },
+    userId: "user-001",
+    status: "pending",
+    pickupType: "dine_in",
+    pickupTime: "2024-01-15T15:15:00Z",
+    totalPrice: 145.0,
+    paymentStatus: "pending",
+    createdAt: "2024-01-15T15:00:00Z",
+    user: {
+      fullName: "Jennie Kim",
+      studentId: "2023300123",
+    },
+    orderItems: [
+      { 
+        id: "item-001",
+        item: { name: "Chicken Adobo" },
+        quantity: 1, 
+        priceAtOrder: 85.0 
+      },
+      { 
+        id: "item-002",
+        item: { name: "Rice" },
+        quantity: 1, 
+        priceAtOrder: 15.0 
+      },
+      { 
+        id: "item-003",
+        item: { name: "Lumpia" },
+        quantity: 1, 
+        priceAtOrder: 45.0 
+      },
     ],
-    total: 145.0,
-    status: "Pending",
-    pickupTime: "3:15 PM",
-    orderTime: "3:00 PM",
-    paymentMethod: "G-Cash",
   },
   {
     id: "ORD-002",
-    studentName: "Maria Santos",
-    studentId: "2023300124",
-    items: [
-      { name: "Chicken Adobo", quantity: 1, price: 85.0 },
-      { name: "Rice", quantity: 1, price: 15.0 },
-      { name: "Lumpia", quantity: 1, price: 45.0 },
+    userId: "user-002",
+    status: "pending",
+    pickupType: "take_out",
+    pickupTime: "2024-01-15T15:15:00Z",
+    totalPrice: 145.0,
+    paymentStatus: "pending",
+    createdAt: "2024-01-15T15:00:00Z",
+    user: {
+      fullName: "Maria Santos",
+      studentId: "2023300124",
+    },
+    orderItems: [
+      { 
+        id: "item-004",
+        item: { name: "Chicken Adobo" },
+        quantity: 1, 
+        priceAtOrder: 85.0 
+      },
+      { 
+        id: "item-005",
+        item: { name: "Rice" },
+        quantity: 1, 
+        priceAtOrder: 15.0 
+      },
+      { 
+        id: "item-006",
+        item: { name: "Lumpia" },
+        quantity: 1, 
+        priceAtOrder: 45.0 
+      },
     ],
-    total: 145.0,
-    status: "Pending",
-    pickupTime: "3:15 PM",
-    orderTime: "3:00 PM",
-    paymentMethod: "G-Cash",
   },
   {
     id: "ORD-003",
-    studentName: "Juan Dela Cruz",
-    studentId: "2023300125",
-    items: [
-      { name: "Beef Steak", quantity: 1, price: 95.0 },
-      { name: "Rice", quantity: 1, price: 15.0 },
+    userId: "user-003",
+    status: "preparing",
+    pickupType: "dine_in",
+    pickupTime: "2024-01-15T15:30:00Z",
+    totalPrice: 110.0,
+    paymentStatus: "cash_on_pickup",
+    createdAt: "2024-01-15T15:10:00Z",
+    user: {
+      fullName: "Juan Dela Cruz",
+      studentId: "2023300125",
+    },
+    orderItems: [
+      { 
+        id: "item-007",
+        item: { name: "Beef Steak" },
+        quantity: 1, 
+        priceAtOrder: 95.0 
+      },
+      { 
+        id: "item-008",
+        item: { name: "Rice" },
+        quantity: 1, 
+        priceAtOrder: 15.0 
+      },
     ],
-    total: 110.0,
-    status: "Preparing",
-    pickupTime: "3:30 PM",
-    orderTime: "3:10 PM",
-    paymentMethod: "Cash",
   },
   {
     id: "ORD-004",
-    studentName: "Ana Rodriguez",
-    studentId: "2023300126",
-    items: [
-      { name: "Pork Sisig", quantity: 1, price: 75.0 },
-      { name: "Rice", quantity: 2, price: 30.0 },
+    userId: "user-004",
+    status: "ready",
+    pickupType: "take_out",
+    pickupTime: "2024-01-15T15:45:00Z",
+    totalPrice: 105.0,
+    paymentStatus: "paid",
+    createdAt: "2024-01-15T15:20:00Z",
+    user: {
+      fullName: "Ana Rodriguez",
+      studentId: "2023300126",
+    },
+    orderItems: [
+      { 
+        id: "item-009",
+        item: { name: "Pork Sisig" },
+        quantity: 1, 
+        priceAtOrder: 75.0 
+      },
+      { 
+        id: "item-010",
+        item: { name: "Rice" },
+        quantity: 2, 
+        priceAtOrder: 15.0 
+      },
     ],
-    total: 105.0,
-    status: "Ready",
-    pickupTime: "3:45 PM",
-    orderTime: "3:20 PM",
-    paymentMethod: "G-Cash",
   },
 ];
 
@@ -84,7 +160,7 @@ export const mockOrders = [
 export class MockApiService {
   static users = [...mockUsers];
   static orders = [...mockOrders];
-  static currentUser = null;
+  static currentUser: any = null;
 
   // User methods
   static async login(email, password) {
@@ -92,9 +168,14 @@ export class MockApiService {
 
     const user = {
       id: "1",
-      fullname: "Demo User",
-      staffId: "STAFF001",
+      role: "staff",
+      fullName: "Demo User",
       email: email,
+      passwordHash: "hashed_password",
+      contact: "+63 912 345 6789",
+      studentId: null,
+      emailVerified: false,
+      verificationCode: "1234",
       createdAt: new Date().toISOString(),
     };
 
@@ -112,9 +193,14 @@ export class MockApiService {
 
     const newUser = {
       id: String(this.users.length + 1),
-      fullname: userData.fullname,
-      staffId: userData.staffId,
+      role: "staff",
+      fullName: userData.fullName,
       email: userData.email,
+      passwordHash: "hashed_password",
+      contact: userData.contact || null,
+      studentId: null,
+      emailVerified: false,
+      verificationCode: "1234",
       createdAt: new Date().toISOString(),
     };
 

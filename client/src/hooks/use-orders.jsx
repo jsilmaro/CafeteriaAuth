@@ -1,65 +1,135 @@
 import { useState } from "react";
 import { useToast } from "./use-toast";
 
-// Mock orders data
+// Mock orders data - aligned with Prisma schema
 const initialMockOrders = [
   {
-    id: "ORD-001",
-    studentName: "Jennie Kim",
-    studentId: "2023300123",
-    items: [
-      { name: "Chicken Adobo", quantity: 1, price: 85.00 },
-      { name: "Rice", quantity: 1, price: 15.00 },
-      { name: "Lumpia", quantity: 1, price: 45.00 }
+    id: "ord-001",
+    userId: "user-001",
+    user: {
+      fullName: "Jennie Kim",
+      studentId: "2023300123",
+      email: "jennie.kim@student.ustp.edu.ph"
+    },
+    orderItems: [
+      { 
+        id: "item-001",
+        item: { name: "Chicken Adobo" },
+        quantity: 1, 
+        priceAtOrder: 85.00 
+      },
+      { 
+        id: "item-002",
+        item: { name: "Rice" },
+        quantity: 1, 
+        priceAtOrder: 15.00 
+      },
+      { 
+        id: "item-003",
+        item: { name: "Lumpia" },
+        quantity: 1, 
+        priceAtOrder: 45.00 
+      }
     ],
-    total: 145.00,
-    status: "Pending",
-    pickupTime: "3:15 PM",
-    orderTime: "3:00 PM",
-    paymentMethod: "G-Cash"
+    totalPrice: 145.00,
+    status: "pending",
+    pickupType: "dine_in",
+    pickupTime: "2024-01-15T15:15:00Z",
+    createdAt: "2024-01-15T15:00:00Z",
+    paymentStatus: "pending"
   },
   {
-    id: "ORD-002",
-    studentName: "Maria Santos",
-    studentId: "2023300124",
-    items: [
-      { name: "Chicken Adobo", quantity: 1, price: 85.00 },
-      { name: "Rice", quantity: 1, price: 15.00 },
-      { name: "Lumpia", quantity: 1, price: 45.00 }
+    id: "ord-002",
+    userId: "user-002",
+    user: {
+      fullName: "Maria Santos",
+      studentId: "2023300124",
+      email: "maria.santos@student.ustp.edu.ph"
+    },
+    orderItems: [
+      { 
+        id: "item-004",
+        item: { name: "Chicken Adobo" },
+        quantity: 1, 
+        priceAtOrder: 85.00 
+      },
+      { 
+        id: "item-005",
+        item: { name: "Rice" },
+        quantity: 1, 
+        priceAtOrder: 15.00 
+      },
+      { 
+        id: "item-006",
+        item: { name: "Lumpia" },
+        quantity: 1, 
+        priceAtOrder: 45.00 
+      }
     ],
-    total: 145.00,
-    status: "Pending",
-    pickupTime: "3:15 PM",
-    orderTime: "3:00 PM",
-    paymentMethod: "G-Cash"
+    totalPrice: 145.00,
+    status: "pending",
+    pickupType: "take_out",
+    pickupTime: "2024-01-15T15:15:00Z",
+    createdAt: "2024-01-15T15:00:00Z",
+    paymentStatus: "pending"
   },
   {
-    id: "ORD-003",
-    studentName: "Juan Dela Cruz",
-    studentId: "2023300125",
-    items: [
-      { name: "Beef Steak", quantity: 1, price: 95.00 },
-      { name: "Rice", quantity: 1, price: 15.00 }
+    id: "ord-003",
+    userId: "user-003",
+    user: {
+      fullName: "Juan Dela Cruz",
+      studentId: "2023300125",
+      email: "juan.delacruz@student.ustp.edu.ph"
+    },
+    orderItems: [
+      { 
+        id: "item-007",
+        item: { name: "Beef Steak" },
+        quantity: 1, 
+        priceAtOrder: 95.00 
+      },
+      { 
+        id: "item-008",
+        item: { name: "Rice" },
+        quantity: 1, 
+        priceAtOrder: 15.00 
+      }
     ],
-    total: 110.00,
-    status: "Preparing",
-    pickupTime: "3:30 PM",
-    orderTime: "3:10 PM",
-    paymentMethod: "Cash"
+    totalPrice: 110.00,
+    status: "preparing",
+    pickupType: "dine_in",
+    pickupTime: "2024-01-15T15:30:00Z",
+    createdAt: "2024-01-15T15:10:00Z",
+    paymentStatus: "cash_on_pickup"
   },
   {
-    id: "ORD-004",
-    studentName: "Ana Rodriguez",
-    studentId: "2023300126",
-    items: [
-      { name: "Pork Sisig", quantity: 1, price: 75.00 },
-      { name: "Rice", quantity: 2, price: 30.00 }
+    id: "ord-004",
+    userId: "user-004",
+    user: {
+      fullName: "Ana Rodriguez",
+      studentId: "2023300126",
+      email: "ana.rodriguez@student.ustp.edu.ph"
+    },
+    orderItems: [
+      { 
+        id: "item-009",
+        item: { name: "Pork Sisig" },
+        quantity: 1, 
+        priceAtOrder: 75.00 
+      },
+      { 
+        id: "item-010",
+        item: { name: "Rice" },
+        quantity: 2, 
+        priceAtOrder: 15.00 
+      }
     ],
-    total: 105.00,
-    status: "Ready",
-    pickupTime: "3:45 PM",
-    orderTime: "3:20 PM",
-    paymentMethod: "G-Cash"
+    totalPrice: 105.00,
+    status: "ready",
+    pickupType: "take_out",
+    pickupTime: "2024-01-15T15:45:00Z",
+    createdAt: "2024-01-15T15:20:00Z",
+    paymentStatus: "paid"
   }
 ];
 
