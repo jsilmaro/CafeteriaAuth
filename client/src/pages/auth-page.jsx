@@ -70,15 +70,19 @@ export default function AuthPage() {
 
   const passwordStrength = getPasswordStrength(registerForm.watch("password") || "");
 
-  // Form handlers
+  // ✅ handleSignIn — just pass email + password
   const handleSignIn = async (data) => {
     try {
-      await loginMutation.mutate(data);
+      await loginMutation.mutate({
+        email: data.email,
+        password: data.password,
+      });
     } catch (error) {
       console.error('Sign in error:', error);
     }
   };
 
+  // ✅ handleRegister — match backend field names
   const handleRegister = async (data) => {
     if (!acceptTerms) {
       toast({
@@ -99,7 +103,12 @@ export default function AuthPage() {
     }
 
     try {
-      await registerMutation.mutate(data);
+      await registerMutation.mutate({
+        fullName: data.fullname, // ✅ check exact backend field (fullName or fullname)
+        staffId: data.staffId,
+        email: data.email,
+        password: data.password,
+      });
     } catch (error) {
       console.error('Register error:', error);
     }
