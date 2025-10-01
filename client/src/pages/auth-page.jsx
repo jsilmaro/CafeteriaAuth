@@ -8,7 +8,7 @@ import { Label } from "../components/ui/label";
 import { Checkbox } from "../components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "../components/ui/dialog";
 import { useToast } from "../hooks/use-toast";
-import { Eye, EyeOff, Mail, Lock, User, IdCard, Key } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Key } from "lucide-react";
 import { cn } from "../lib/utils";
 import ustpLogo from "../assets/ustp-logo.png";
 import cafeteriaBg from "../assets/cafeteria-bg.jpg";
@@ -27,7 +27,11 @@ export default function AuthPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      setLocation('/dashboard');
+      if (user.role === 'admin') {
+        setLocation('/admin');
+      } else {
+        setLocation('/dashboard');
+      }
     }
   }, [user, setLocation]);
 
@@ -39,14 +43,14 @@ export default function AuthPage() {
     },
   });
 
-  // Register form
+  // Register form - aligned with Prisma schema
   const registerForm = useForm({
     defaultValues: {
-      fullname: "",
-      staffId: "",
+      fullName: "",
       email: "",
       password: "",
       confirmPassword: "",
+      contact: "",
     },
   });
 
@@ -70,19 +74,25 @@ export default function AuthPage() {
 
   const passwordStrength = getPasswordStrength(registerForm.watch("password") || "");
 
-  // ✅ handleSignIn — just pass email + password
+  // Form handlers
   const handleSignIn = async (data) => {
     try {
-      await loginMutation.mutate({
-        email: data.email,
-        password: data.password,
-      });
+      // Check if trying to login with admin credentials in staff auth
+      if (data.email.includes('admin') || data.email.includes('administrator')) {
+        toast({
+          title: "Access Denied",
+          description: "Admin credentials cannot be used in staff portal. Please use the Admin Access portal.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      await loginMutation.mutate(data);
     } catch (error) {
       console.error('Sign in error:', error);
     }
   };
 
-  // ✅ handleRegister — match backend field names
   const handleRegister = async (data) => {
     if (!acceptTerms) {
       toast({
@@ -103,12 +113,7 @@ export default function AuthPage() {
     }
 
     try {
-      await registerMutation.mutate({
-        fullName: data.fullname, // ✅ check exact backend field (fullName or fullname)
-        staffId: data.staffId,
-        email: data.email,
-        password: data.password,
-      });
+      await registerMutation.mutate(data);
     } catch (error) {
       console.error('Register error:', error);
     }
@@ -347,25 +352,25 @@ export default function AuthPage() {
                       type="text" 
                       placeholder="Enter your full name"
                       className="pl-10 border-gray-300 focus:border-green-500 focus:ring-green-500"
-                      {...registerForm.register("fullname")}
+                      {...registerForm.register("fullName")}
                       data-testid="input-register-fullname"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="register-staffid" className="block text-sm font-medium text-gray-700 mb-2">
-                    Staff ID
+                  <Label htmlFor="register-contact" className="block text-sm font-medium text-gray-700 mb-2">
+                    Contact Number
                   </Label>
                   <div className="relative">
-                    <IdCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input 
-                      id="register-staffid"
+                      id="register-contact"
                       type="text" 
-                      placeholder="Enter your staff ID"
+                      placeholder="+63 912 345 6789"
                       className="pl-10 border-gray-300 focus:border-green-500 focus:ring-green-500"
-                      {...registerForm.register("staffId")}
-                      data-testid="input-register-staffid"
+                      {...registerForm.register("contact")}
+                      data-testid="input-register-contact"
                     />
                   </div>
                 </div>
