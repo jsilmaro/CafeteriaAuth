@@ -25,9 +25,6 @@ export function AuthProvider({ children }) {
         if (credentials.email.includes('admin') || credentials.email.includes('administrator')) {
           userRole = "admin";
           fullName = "Admin User";
-        } else if (credentials.email.includes('student')) {
-          userRole = "student";
-          fullName = "Student User";
         }
         
         const mockUser = {
@@ -37,7 +34,7 @@ export function AuthProvider({ children }) {
           email: credentials.email,
           emailVerified: true,
           contact: "+63 912 345 6777",
-          studentId: userRole === "student" ? "2021-12345" : null,
+          studentId: null,
           createdAt: new Date().toISOString(),
           verificationCode: null
         };

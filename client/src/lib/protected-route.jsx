@@ -3,7 +3,7 @@ import { Loader2 } from "lucide-react";
 import { Route, useLocation } from "wouter";
 import { useEffect, useState } from "react";
 
-export function ProtectedRoute({ path, component: Component, adminOnly = false, studentOnly = false }) {
+export function ProtectedRoute({ path, component: Component, adminOnly = false }) {
   const { user, isLoading } = useAuth();
   const [, navigate] = useLocation();
   const [shouldRender, setShouldRender] = useState(false);
@@ -20,25 +20,13 @@ export function ProtectedRoute({ path, component: Component, adminOnly = false, 
     }
 
     if (adminOnly && user.role !== 'admin') {
-      if (user.role === 'student') {
-        navigate('/student-dashboard');
-      } else {
-        navigate('/dashboard');
-      }
-      return;
-    }
-
-    if (studentOnly && user.role !== 'student') {
-      if (user.role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/dashboard');
-      }
+      // Non-admin users trying to access admin pages go to dashboard
+      navigate('/dashboard');
       return;
     }
 
     setShouldRender(true);
-  }, [user, isLoading, navigate, adminOnly, studentOnly]);
+  }, [user, isLoading, navigate, adminOnly]);
 
   if (isLoading) {
     return (

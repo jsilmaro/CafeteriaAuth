@@ -11,7 +11,6 @@ import OrderManagementPage from "./pages/order-management";
 import AdminPage from "./pages/admin-page";
 import LandingPage from "./pages/landing-page";
 import AdminAuthPage from "./pages/admin-auth-page";
-import StudentDashboard from "./pages/student-dashboard";
 import { ProtectedRoute } from "./lib/protected-route";
 
 function Router() {
@@ -23,7 +22,6 @@ function Router() {
       <ProtectedRoute path="/dashboard" component={HomePage} />
       <ProtectedRoute path="/orders" component={OrderManagementPage} />
       <ProtectedRoute path="/admin" component={AdminPage} adminOnly={true} />
-      <ProtectedRoute path="/student-dashboard" component={StudentDashboard} studentOnly={true} />
       <Route component={NotFound} />
     </Switch>
   );

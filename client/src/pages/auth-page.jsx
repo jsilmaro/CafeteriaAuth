@@ -29,8 +29,6 @@ export default function AuthPage() {
     if (user) {
       if (user.role === 'admin') {
         setLocation('/admin');
-      } else if (user.role === 'student') {
-        setLocation('/student-dashboard');
       } else {
         setLocation('/dashboard');
       }
