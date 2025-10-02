@@ -6,8 +6,12 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const { toast } = useToast();
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // Initialize user from localStorage immediately (synchronous)
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  const [isLoading, setIsLoading] = useState(true); // Start with true for initial check
 
   /**
    * ✅ STAFF / ADMIN LOGIN
@@ -30,8 +34,10 @@ export function AuthProvider({ children }) {
           description: `Logged in as ${user.fullName || user.email}`,
         });
 
-        // ✅ Redirect after login
-        window.location.href = "/dashboard";
+        // ✅ Redirect after login (small delay to ensure state is saved)
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 100);
       } catch (err) {
         console.error("Login error:", err);
         toast({
@@ -68,8 +74,10 @@ export function AuthProvider({ children }) {
         localStorage.removeItem("user");
         setUser(null);
 
-        // Redirect to home or login
-        window.location.href = "/";
+        // Redirect to home or login (small delay to ensure state is cleared)
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 100);
       } catch (err) {
         console.error("Register error:", err);
         toast({
@@ -99,28 +107,45 @@ export function AuthProvider({ children }) {
         description: "You have been successfully logged out.",
       });
 
-      window.location.href = "/";
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 100);
     },
     isPending: false,
   };
 
   /**
-   * ✅ RESTORE SESSION (auto-login from token)
+   * ✅ RESTORE SESSION (validate token with backend)
    */
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    
+    // If no token, we're done checking
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
 
+    // Validate token with backend
     (async () => {
       try {
         const res = await api.get("/auth/user");
+        // Update user data from backend
         setUser(res.data);
         localStorage.setItem("user", JSON.stringify(res.data));
       } catch (err) {
-        console.warn("Session restore failed:", err);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        setUser(null);
+        // Only clear session on auth errors (401/403), not network errors
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          console.warn("Session invalid, clearing auth state");
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          setUser(null);
+        } else {
+          // Network error or other issue - keep existing session
+          console.warn("Session validation failed (network issue), keeping existing session:", err.message);
+        }
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, []);
