@@ -44,7 +44,7 @@ export default function SharedSidebar({ children }) {
   const navItems = [
     { id: "dashboard", label: "Seller Dashboard", icon: LayoutDashboard, path: "/dashboard", implemented: true },
     { id: "orders", label: "Order Management", icon: ShoppingCart, path: "/orders", implemented: true },
-    { id: "inventory", label: "Cafeteria Inventory", icon: Package, path: "/inventory", implemented: false },
+    { id: "menu", label: "Menu Management", icon: Package, path: "/menu", implemented: true },
     { id: "feedback", label: "Customer Feedback", icon: MessageSquare, path: "/feedback", implemented: false },
     { id: "analytics", label: "Analytics", icon: BarChart3, path: "/analytics", implemented: false },
     { id: "settings", label: "Settings", icon: Settings, path: "/settings", implemented: false },

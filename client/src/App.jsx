@@ -1,4 +1,6 @@
 import { Switch, Route } from "wouter";
+import MenuPage from "./pages/menu-page";
+import { ProtectedRoute } from "./lib/protected-route";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "./components/ui/toaster";
@@ -11,7 +13,6 @@ import OrderManagementPage from "./pages/order-management";
 import AdminPage from "./pages/admin-page";
 import LandingPage from "./pages/landing-page";
 import AdminAuthPage from "./pages/admin-auth-page";
-import { ProtectedRoute } from "./lib/protected-route";
 
 function Router() {
   return (
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <ProtectedRoute path="/dashboard" component={HomePage} />
       <ProtectedRoute path="/orders" component={OrderManagementPage} />
+      <ProtectedRoute path="/menu" component={MenuPage} />
       <ProtectedRoute path="/admin" component={AdminPage} adminOnly={true} />
       <Route component={NotFound} />
     </Switch>
