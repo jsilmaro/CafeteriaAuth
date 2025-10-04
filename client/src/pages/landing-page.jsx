@@ -30,7 +30,7 @@ export default function LandingPage() {
   };
 
   const handleStudentAccess = () => {
-    window.open('https://student-cafeteria-portal.ustp.edu.ph', '_blank');
+    window.open('https://sotf-enggg.vercel.app/', '_blank');
   };
 
   const accessTypes = [
