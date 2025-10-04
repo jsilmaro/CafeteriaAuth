@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Prefer env override, fallback to live backend URL
 const API_BASE_URL =
-  import.meta?.env?.VITE_API_BASE_URL || "https://cafeteria-backend-eight.vercel.app";
+  import.meta?.env?.VITE_API_BASE_URL || "https://cafeteria-backend-ky8l.onrender.com";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
