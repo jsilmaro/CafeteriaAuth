@@ -34,10 +34,6 @@ export function AuthProvider({ children }) {
           description: `Logged in as ${user.fullName || user.email}`,
         });
 
-        // ✅ Redirect after login (small delay to ensure state is saved)
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 100);
       } catch (err) {
         console.error("Login error:", err);
         toast({

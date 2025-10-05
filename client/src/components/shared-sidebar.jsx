@@ -34,8 +34,6 @@ export default function SharedSidebar({ children }) {
     localStorage.setItem('sidebar-collapsed', JSON.stringify(newState));
   };
 
-
-
   const handleLogout = () => {
     logoutMutation.mutate();
   };
@@ -44,14 +42,14 @@ export default function SharedSidebar({ children }) {
   const navItems = [
     { id: "dashboard", label: "Seller Dashboard", icon: LayoutDashboard, path: "/dashboard", implemented: true },
     { id: "orders", label: "Order Management", icon: ShoppingCart, path: "/orders", implemented: true },
-    { id: "inventory", label: "Cafeteria Inventory", icon: Package, path: "/inventory", implemented: false },
-    { id: "feedback", label: "Customer Feedback", icon: MessageSquare, path: "/feedback", implemented: false },
-    { id: "analytics", label: "Analytics", icon: BarChart3, path: "/analytics", implemented: false },
-    { id: "settings", label: "Settings", icon: Settings, path: "/settings", implemented: false },
+    { id: "inventory", label: "Cafeteria Inventory", icon: Package, path: "/inventory", implemented: true },
+    { id: "feedback", label: "Customer Feedback", icon: MessageSquare, path: "/feedback", implemented: true },
+    { id: "analytics", label: "Analytics", icon: BarChart3, path: "/analytics", implemented: true },
+    { id: "settings", label: "Settings", icon: Settings, path: "/settings", implemented: true },
   ].filter(item => item.implemented); // Only show implemented routes
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="flex h-screen overflow-hidden"> {/* Changed min-h-screen to h-screen and added overflow-hidden */}
       {/* Sidebar */}
       <aside 
         className={cn(
@@ -88,7 +86,7 @@ export default function SharedSidebar({ children }) {
         </div>
 
         {/* Management Section */}
-        <div className="p-4 flex-1">
+        <div className="p-4 flex-1 overflow-y-auto">
           {!isCollapsed && (
             <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Management</p>
           )}
@@ -142,7 +140,7 @@ export default function SharedSidebar({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-y-auto bg-gray-100">
         {children}
       </main>
     </div>
