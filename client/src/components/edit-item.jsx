@@ -26,44 +26,40 @@ function EditItemModal({ isOpen, onClose, onSave, item, onDelete, categories }) 
     name: "",
     description: "",
     price: "",
-    photoURL: "",
+    photoUrl: "",
     availability: true,
-    amountOfStock: 0,
-    category: (Array.isArray(categories) && categories.length > 1) ? categories[1] : "",
+    stockLimit: 0,
+    categoryId: "", // store id here
   });
 
   useEffect(() => {
     if (item) {
       setFormData({
+        id: item.id, // ✅ include this
         name: item.name || "",
         description: item.description || "",
         price: item.price || "",
         photoURL: item.photoURL || "",
         availability: item.availability ?? true,
-        amountOfStock: item.amountOfStock || 0,
-        category: item.category || ((Array.isArray(categories) && categories.length > 1) ? categories[1] : ""),
+        stockLimit: item.stockLimit || 0,
+        categoryId: item.category?.id || "", // or category.id if you use IDs
       });
     } else {
       setFormData({
+        id: null,
         name: "",
         description: "",
         price: "",
         photoURL: "",
         availability: true,
-        amountOfStock: 0,
-        category: (Array.isArray(categories) && categories.length > 1) ? categories[1] : "",
+        stockLimit: 0,
+        categoryId: "",
       });
     }
   }, [item, isOpen, categories]);
 
-  useEffect(() => {
-    if (isOpen) {
-      console.log("🟢 EditItemModal opened for item:", item?.name ?? "(new)");
-    }
-  }, [isOpen, item]);
-
   const handleSave = () => {
-    onSave(formData);
+    onSave(formData); // ✅ includes id now
     onClose();
   };
 
@@ -166,38 +162,36 @@ function EditItemModal({ isOpen, onClose, onSave, item, onDelete, categories }) 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="justify-start">
-                    <ChevronsUpDown />
-                    {formData.category || "Select a category"}
+                    <ChevronsUpDown className="mr-2 h-4 w-4" />
+                    {categories.find(c => c.id === formData.categoryId)?.name || "Select a category"}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {/* Corrected line with conditional rendering */}
-                  {Array.isArray(categories) && categories.filter(cat => cat !== "All Categories").map((cat) => (
-                    <DropdownMenuItem
-                      key={cat}
-                      onClick={() =>
-                        setFormData({ ...formData, category: cat })
-                      }
-                    >
-                      {cat}
-                    </DropdownMenuItem>
-                  ))}
+                  {Array.isArray(categories) &&
+                    categories.map((cat) => (
+                      <DropdownMenuItem
+                        key={cat.id}
+                        onClick={() => setFormData({ ...formData, categoryId: cat.id })}
+                      >
+                        {cat.name}
+                      </DropdownMenuItem>
+                    ))}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
             <div className="flex flex-col items-center justify-start w-1/2">
-              <Label htmlFor="amountOfStock2" className="pb-3 w-full text-left">
+              <Label htmlFor="stockLimit" className="pb-3 w-full text-left">
                 Stock Quantity
               </Label>
               <Input
-                id="amountOfStock2"
+                id="stockLimit"
                 type="number"
                 min={0}
-                value={formData.amountOfStock}
+                value={formData.stockLimit}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    amountOfStock: Number(e.target.value),
+                    stockLimit: Number(e.target.value),
                   })
                 }
               />
@@ -263,7 +257,12 @@ EditItemModal.propTypes = {
   onSave: PropTypes.func.isRequired,
   item: PropTypes.object,
   onDelete: PropTypes.func.isRequired,
-  categories: PropTypes.arrayOf(PropTypes.string).isRequired,
+  categories: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default EditItemModal;

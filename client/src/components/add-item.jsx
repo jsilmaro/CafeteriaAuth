@@ -3,8 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { supabase } from "@/lib/supabase";
 
-function AddItem({ open, onClose, onAdd }) {
+function AddItem({ open, onClose, onAdd, categories }) {
   const [preview, setPreview] = useState(null);
   const [category, setCategory] = useState("");
   const [showNewCategory, setShowNewCategory] = useState(false);
@@ -15,32 +16,77 @@ function AddItem({ open, onClose, onAdd }) {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
 
+  const [file, setFile] = useState(null);
+
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      reader.onloadend = () => setPreview(reader.result);
+      reader.readAsDataURL(selectedFile);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    let photoUrl = "";
+
+    try {
+      // ✅ Upload image if selected
+      if (file) {
+        const fileName = `${Date.now()}-${file.name}`;
+        const { data, error } = await supabase.storage
+          .from(import.meta.env.VITE_SUPABASE_BUCKET)
+          .upload(fileName, file);
+
+        if (error) throw error;
+
+        const { data: publicUrlData } = supabase.storage
+          .from(import.meta.env.VITE_SUPABASE_BUCKET)
+          .getPublicUrl(fileName);
+
+        photoUrl = publicUrlData.publicUrl;
+      }
+    } catch (err) {
+      console.error("Upload failed:", err);
+      alert("Image upload failed");
+    }
+
+    // ✅ Step 5: Handle “Add New Category” flow
+    let categoryId = category; // existing selected ID
+
+    if (showNewCategory && newCategory) {
+      try {
+        const res = await api.post("/menu/categories", {
+          name: newCategory,
+          description: "",
+        });
+        categoryId = res.data.id; // use the ID from backend
+        console.log("✅ Created new category:", res.data.name);
+      } catch (err) {
+        console.error("❌ Failed to create category:", err);
+        alert("Failed to create new category");
+        return; // stop if category creation failed
+      }
+    }
+
+    // ✅ Build final payload
     const item = {
-      id: Date.now(),
       name,
-      price,
+      price: Number(price),
       description,
-      category: showNewCategory ? newCategory : category,
-      amountOfStock: stock,
+      categoryId, // use the resolved ID
+      stockLimit: Number(stock),
       availability: available,
-      photoURL: preview || "", // Use preview for photoURL
+      photoUrl,
     };
+
+    // ✅ Call parent handler
     if (onAdd) onAdd(item);
 
-    // Reset form
+    // ✅ Reset form
     setName("");
     setPrice("");
     setDescription("");
@@ -136,23 +182,16 @@ function AddItem({ open, onClose, onAdd }) {
             <div className="flex-1">
               <label className="block font-medium mb-1 text-sm">Category</label>
               <select
-                className="border rounded p-2 w-full text-sm pr-4" // Added text-sm and pr-4 for arrow adjustment
                 value={category}
-                onChange={(e) => {
-                  if (e.target.value === "add-new") setShowNewCategory(true);
-                  else {
-                    setCategory(e.target.value);
-                    setShowNewCategory(false);
-                  }
-                }}
-                required={!showNewCategory}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full p-2 border rounded"
               >
-                <option value="">Select a category</option>
-                <option>Appetizer</option>
-                <option>Main Dish</option>
-                <option>Dessert</option>
-                <option>Beverage</option>
-                <option value="add-new">+ Add New Category</option>
+                <option value="">Select category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
               </select>
               {showNewCategory && (
                 <Input

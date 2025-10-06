@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import SharedSidebar from "../components/shared-sidebar";
 import { Button } from "../components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FoodCard from "../components/food-card";
 import EditItemModal from "../components/edit-item";
 import AddItemModal from "../components/add-item";
@@ -21,104 +21,132 @@ import {
   DropdownMenuItem,
 } from "../components/ui/dropdown-menu";
 
+import api from "@/lib/api";
+
 function CafeteriaInventory() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [filter, setFilter] = useState("All Items");
   // ADDED: New state for category filter
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
 
-  const [inventoryItems, setInventoryItems] = useState([
-    {
-      id: 1,
-      name: "Chicken Adobo",
-      description:
-        "A popular Filipino dish consisting of chicken braised in a savory and tangy sauce.",
-      price: "50 PHP",
-      availability: true,
-      amountOfStock: 15,
-      photoURL:
-        "https://images.pexels.com/photos/6525933/pexels-photo-6525933.jpeg",
-      category: "Value Meals",
-    },
-    {
-      id: 2,
-      name: "Pancit Canton",
-      description: "Stir-fried noodles with vegetables, meat, and savory sauce.",
-      price: "40 PHP",
-      availability: true,
-      amountOfStock: 10,
-      photoURL:
-        "https://images.pexels.com/photos/461382/pexels-photo-461382.jpeg",
-      category: "Short Order",
-    },
-    {
-      id: 3,
-      name: "Lumpiang Shanghai",
-      description: "Crispy spring rolls filled with ground pork and vegetables.",
-      price: "30 PHP",
-      availability: true,
-      amountOfStock: 20,
-      photoURL:
-        "https://images.pexels.com/photos/461382/pexels-photo-461382.jpeg",
-      category: "Snacks",
-    },
-    {
-      id: 4,
-      name: "Sinigang na Baboy",
-      description: "Pork soup with sour tamarind broth and assorted vegetables.",
-      price: "60 PHP",
-      availability: false,
-      amountOfStock: 0,
-      photoURL:
-        "https://images.pexels.com/photos/461382/pexels-photo-461382.jpeg",
-      category: "Value Meals",
-    },
-    {
-      id: 5,
-      name: "Tocino",
-      description: "Sweet cured pork served with garlic rice and egg.",
-      price: "45 PHP",
-      availability: true,
-      amountOfStock: 4,
-      photoURL:
-        "https://images.pexels.com/photos/461382/pexels-photo-461382.jpeg",
-      category: "Packed Meals",
-    },
-    {
-      id: 6,
-      name: "Bicol Express",
-      description: "Spicy pork stew cooked in coconut milk and chili peppers.",
-      price: "55 PHP",
-      availability: true,
-      amountOfStock: 12,
-      photoURL:
-        "https://images.pexels.com/photos/461382/pexels-photo-461382.jpeg",
-      category: "Packed Meals",
-    },
-  ]);
+  const [inventoryItems, setInventoryItems] = useState([]);
 
-  // NEW: List of categories for the dropdown
-  const categories = [
-    "All Categories",
-    "Snacks",
-    "Budget Snacks",
-    "Value Meals",
-    "Packed Meals",
-    "Buffet",
-    "Short Order",
-  ];
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const res = await api.get("/menu");
+        setInventoryItems(res.data); // ✅ your backend should return an array of menu items
+        console.log("📦 Loaded items:", res.data);
+      } catch (err) {
+        console.error("❌ Failed to fetch inventory:", err);
+      }
+    };
 
-  const handleDeleteItem = (itemId) => {
-    setInventoryItems((currentItems) =>
-      currentItems.filter((item) => item.id !== itemId)
-    );
-    setIsEditModalOpen(false);
-    setEditingItem(null);
+    fetchItems();
+  }, []);
+
+  // ✅ NEW: List of categories for the dropdown
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    // Use your api instance instead of fetch for consistency
+    const fetchCategories = async () => {
+      try {
+        const res = await api.get("/menu/categories");
+        setCategories(res.data);
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // ✅ Add Item (POST /menu)
+  const handleAddItem = async (newItem) => {
+    try {
+      // Map frontend fields to backend expected keys
+      const payload = {
+        name: newItem.name,
+        description: newItem.description,
+        price: Number(newItem.price),
+        availability: newItem.availability ?? true,
+        stockLimit: Number(newItem.stockLimit),
+        categoryId: newItem.categoryId || newItem.category, // depending on your AddItemModal
+        photoUrl: newItem.photoURL || newItem.photoUrl || "",
+      };
+
+      const response = await api.post("/menu", payload);
+      const savedItem = response.data;
+
+      setInventoryItems((prev) => [...prev, savedItem]);
+      setIsAddModalOpen(false);
+      console.log("✅ Item added:", savedItem);
+    } catch (error) {
+      console.error("❌ Failed to add item:", error);
+      alert(error.response?.data?.error || "Failed to save item");
+    }
   };
 
+  // ✅ Save / Update Item (PUT /menu/:id)
+  const handleSaveItem = async (updatedItem) => {
+    try {
+      const payload = {
+        name: updatedItem.name,
+        description: updatedItem.description,
+        price: Number(updatedItem.price),
+        availability: updatedItem.availability,
+        stockLimit: Number(updatedItem.stockLimit),
+        categoryId: updatedItem.categoryId || updatedItem.category,
+        ...(updatedItem.photoURL || updatedItem.photoUrl
+          ? { photoUrl: updatedItem.photoURL || updatedItem.photoUrl }
+          : {}),
+      };
+
+      let response;
+
+      if (updatedItem.id) {
+        // 🧩 Update existing item
+        response = await api.put(`/menu/${updatedItem.id}`, payload);
+        setInventoryItems((prev) =>
+          prev.map((item) =>
+            item.id === updatedItem.id ? response.data : item
+          )
+        );
+        console.log("✅ Item updated:", response.data);
+      } else {
+        // 🧩 Create new one
+        response = await api.post(`/menu`, payload);
+        setInventoryItems((prev) => [...prev, response.data]);
+        console.log("✅ Item created:", response.data);
+      }
+
+      setIsEditModalOpen(false);
+      setEditingItem(null);
+    } catch (error) {
+      console.error("❌ Failed to save item:", error);
+      alert(error.response?.data?.error || "Failed to save item");
+    }
+  };
+
+  // ✅ Delete Item (DELETE /menu/:id)
+  const handleDeleteItem = async (itemId) => {
+    try {
+      await api.delete(`/menu/${itemId}`);
+      setInventoryItems((prev) => prev.filter((item) => item.id !== itemId));
+      console.log("🗑️ Item deleted:", itemId);
+      setIsEditModalOpen(false);
+      setEditingItem(null);
+    } catch (error) {
+      console.error("❌ Failed to delete item:", error);
+      alert(error.response?.data?.error || "Failed to delete item");
+    }
+  };
+
+  // ✅ Search
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
@@ -130,12 +158,12 @@ function CafeteriaInventory() {
       item.description.toLowerCase().includes(searchQuery.toLowerCase());
 
     let matchesAvailabilityFilter = true;
-    if (filter === "Available") matchesAvailabilityFilter = item.availability && item.amountOfStock > 0;
-    if (filter === "Low Stock") matchesAvailabilityFilter = item.amountOfStock > 0 && item.amountOfStock < 5;
-    if (filter === "Sold Out") matchesAvailabilityFilter = item.amountOfStock === 0;
+    if (filter === "Available") matchesAvailabilityFilter = item.availability && item.stockLimit > 0;
+    if (filter === "Low Stock") matchesAvailabilityFilter = item.stockLimit > 0 && item.stockLimit < 5;
+    if (filter === "Sold Out") matchesAvailabilityFilter = item.stockLimit === 0;
 
     const matchesCategoryFilter =
-      categoryFilter === "All Categories" || item.category === categoryFilter;
+      categoryFilter === "All Categories" || item.category?.name === categoryFilter;
 
     return matchesSearch && matchesAvailabilityFilter && matchesCategoryFilter;
   });
@@ -148,17 +176,17 @@ function CafeteriaInventory() {
     },
     {
       name: "Available",
-      numberOfItems: filteredItems.filter((i) => i.availability && i.amountOfStock > 0).length,
+      numberOfItems: filteredItems.filter((i) => i.availability && i.stockLimit > 0).length,
       icon: <CircleCheck size={24} color="#22C55E" />,
     },
     {
       name: "Low Stock",
-      numberOfItems: filteredItems.filter((i) => i.amountOfStock > 0 && i.amountOfStock < 5).length,
+      numberOfItems: filteredItems.filter((i) => i.stockLimit > 0 && i.stockLimit < 5).length,
       icon: <CircleAlert size={24} color="#FACC15" />,
     },
     {
     name: "Sold Out",
-      numberOfItems: filteredItems.filter((i) => i.amountOfStock === 0).length,
+      numberOfItems: filteredItems.filter((i) => i.stockLimit === 0).length,
       icon: <CircleX size={24} color="#EF4444" />,
     },
   ];
@@ -237,13 +265,18 @@ function CafeteriaInventory() {
                   <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent align="start" className="w-48">
+                <DropdownMenuItem onClick={() => setCategoryFilter("All Categories")}>
+                  All Categories
+                </DropdownMenuItem>
+
                 {categories.map((cat) => (
                   <DropdownMenuItem
-                    key={cat}
-                    onClick={() => setCategoryFilter(cat)}
+                    key={cat.id}
+                    onClick={() => setCategoryFilter(cat.name)}
                   >
-                    {cat}
+                    {cat.name}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -276,8 +309,8 @@ function CafeteriaInventory() {
                 description={food.description}
                 price={food.price}
                 availability={food.availability}
-                amountOfStock={food.amountOfStock}
-                photoURL={food.photoURL}
+                stockLimit={food.stockLimit} // ✅ match backend
+                photoURL={food.photoUrl}        // ✅ match backend
                 onEdit={() => {
                   setEditingItem(food);
                   setIsEditModalOpen(true);
@@ -292,29 +325,17 @@ function CafeteriaInventory() {
               setIsEditModalOpen(false);
               setEditingItem(null);
             }}
-            onSave={(updatedItem) => {
-              setInventoryItems((items) =>
-                items.map((item) =>
-                  item.id === editingItem.id ? { ...item, ...updatedItem } : item
-                )
-              );
-              setIsEditModalOpen(false);
-              setEditingItem(null);
-            }}
-            onDelete={handleDeleteItem}
+            onSave={handleSaveItem}           // ✅ calls backend (PUT /api/menu/:id)
+            onDelete={handleDeleteItem}       // ✅ calls backend (DELETE /api/menu/:id)
             item={editingItem}
+            categories={categories} // ✅ fix category type warning
           />
 
           <AddItemModal
             open={isAddModalOpen}
             onClose={() => setIsAddModalOpen(false)}
-            onAdd={(newItem) => {
-              setInventoryItems((items) => [
-                ...items,
-                { ...newItem, id: items.length + 1 },
-              ]);
-              setIsAddModalOpen(false);
-            }}
+            onAdd={handleAddItem} // ✅ already hooked to backend
+            categories={categories}
           />
         </div>
       </>
