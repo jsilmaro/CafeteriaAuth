@@ -30,7 +30,7 @@ export default function LandingPage() {
   };
 
   const handleStudentAccess = () => {
-    window.open('https://sotf-enggg.vercel.app/', '_blank');
+    window.open('https://e-faspecc.vercel.app/', '_blank');
   };
 
   const accessTypes = [
