@@ -18,6 +18,7 @@ function AddItem({ open, onClose, onAdd }) {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // eslint-disable-next-line no-undef
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);

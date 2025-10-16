@@ -1,57 +1,168 @@
 import {
-  CircleArrowUp,
-  LineChart,
   DollarSign,
-  ShoppingCart,
-  Clock,
-  LayoutGrid,
+  Calendar,
+  RefreshCcw,
+  BarChart2,
+  Search,
 } from "lucide-react";
 import SharedSidebar from "../components/shared-sidebar";
 import { Button } from "../components/ui/button";
 import { useState } from "react";
 
-// Mock data for the analytics page
-const analyticsData = {
-  totalRevenue: 500.0,
-  totalTransactions: 50,
-  averageOrderValue: 14.8,
-  peakHours: "12-1PM",
-  revenueTrend: [
-    { day: "Mon", value: 2000 },
-    { day: "Tue", value: 2500 },
-    { day: "Wed", value: 2000 },
-    { day: "Thu", value: 2500 },
-    { day: "Fri", value: 2000 },
-    { day: "Sat", value: 2500 },
-    { day: "Sun", value: 2000 },
-  ],
-  topSellingItems: [
-    { name: "Chicken Rice", orders: 45 },
-    { name: "Beef Burger", orders: 35 },
-    { name: "Chicken Adobo", orders: 25 },
-  ],
-  bestPerformance: "Chicken Rice",
-  highestRevenue: "Beef Burger",
-  growthRate: 12.5,
-};
-
 function Analytics() {
-  const [activeTab, setActiveTab] = useState("Today");
+  const [timeFilter, setTimeFilter] = useState("Today");
+  const [selectedBar, setSelectedBar] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [tooltip, setTooltip] = useState({
+    show: false,
+    day: "",
+    value: 0,
+    x: 0,
+    y: 0,
+  });
 
-  // Helper component for metric cards
-  const MetricCard = ({ title, value, icon }) => (
-    <div className="bg-white p-4 rounded-lg shadow flex items-center justify-between">
-      <div>
-        <h3 className="text-gray-600 text-sm">{title}</h3>
-        <p className="text-2xl font-semibold mt-1">{value}</p>
+  // --- MOCK ANALYTICS DATA ---
+  const analyticsData = {
+    Today: {
+      totalRevenue: 500.0,
+      revenueChange: 12.55,
+      totalTransactions: 50,
+      averageOrderValue: 14.8,
+      peakHours: "12-1 PM",
+      revenueTrend: [
+        { day: "Mon", value: 1800 },
+        { day: "Tue", value: 1900 },
+        { day: "Wed", value: 2200 },
+        { day: "Thu", value: 2000 },
+        { day: "Fri", value: 2500 },
+        { day: "Sat", value: 2800 },
+        { day: "Sun", value: 2600 },
+      ],
+      topSellingItems: [
+        { name: "Chicken Adobo", quantity: 45 },
+        { name: "Pancit Canton", quantity: 38 },
+        { name: "Tocino", quantity: 24 },
+      ],
+      bestPerformance: { orders: 45 },
+      highestRevenue: { amount: 576.0 },
+      growthRate: { percentage: 12.5 },
+    },
+    Week: {
+      totalRevenue: 3500.0,
+      revenueChange: 8.2,
+      totalTransactions: 250,
+      averageOrderValue: 14.0,
+      peakHours: "6-7 PM",
+      revenueTrend: [
+        { day: "Mon", value: 1800 },
+        { day: "Tue", value: 1900 },
+        { day: "Wed", value: 2200 },
+        { day: "Thu", value: 2000 },
+        { day: "Fri", value: 2500 },
+        { day: "Sat", value: 2800 },
+        { day: "Sun", value: 2600 },
+      ],
+      topSellingItems: [
+        { name: "Pancit Canton", quantity: 180 },
+        { name: "Chicken Adobo", quantity: 155 },
+        { name: "Tocino", quantity: 120 },
+      ],
+      bestPerformance: { orders: 78 },
+      highestRevenue: { amount: 1200.0 },
+      growthRate: { percentage: 8.2 },
+    },
+    Month: {
+      totalRevenue: 15000.0,
+      revenueChange: 25.0,
+      totalTransactions: 1000,
+      averageOrderValue: 15.0,
+      peakHours: "12-1 PM",
+      revenueTrend: [
+        { day: "Week 1", value: 2500 },
+        { day: "Week 2", value: 3800 },
+        { day: "Week 3", value: 4500 },
+        { day: "Week 4", value: 4200 },
+      ],
+      topSellingItems: [
+        { name: "Chicken Adobo", quantity: 600 },
+        { name: "Tocino", quantity: 550 },
+        { name: "Pancit Canton", quantity: 500 },
+      ],
+      bestPerformance: { orders: 150 },
+      highestRevenue: { amount: 3500.0 },
+      growthRate: { percentage: 25.0 },
+    },
+    Year: {
+      totalRevenue: 180000.0,
+      revenueChange: 15.0,
+      totalTransactions: 12000,
+      averageOrderValue: 15.0,
+      peakHours: "12-1 PM",
+      revenueTrend: [
+        { day: "Jan", value: 2000 },
+        { day: "Feb", value: 2500 },
+        { day: "Mar", value: 3000 },
+        { day: "Apr", value: 2800 },
+        { day: "May", value: 3200 },
+        { day: "Jun", value: 3500 },
+        { day: "Jul", value: 4000 },
+        { day: "Aug", value: 4200 },
+        { day: "Sep", value: 3800 },
+        { day: "Oct", value: 4100 },
+        { day: "Nov", value: 3900 },
+        { day: "Dec", value: 4500 },
+      ],
+      topSellingItems: [
+        { name: "Chicken Adobo", quantity: 8000 },
+        { name: "Pancit Canton", quantity: 7500 },
+        { name: "Tocino", quantity: 6800 },
+      ],
+      bestPerformance: { orders: 2000 },
+      highestRevenue: { amount: 5000.0 },
+      growthRate: { percentage: 15.0 },
+    },
+  };
+
+  const currentData = analyticsData[timeFilter];
+  const maxValue = Math.max(...currentData.revenueTrend.map((item) => item.value));
+
+  // --- HOVER TOOLTIP ---
+  const handleMouseMove = (e, item) => {
+    setTooltip({
+      show: true,
+      day: item.day,
+      value: item.value,
+      x: e.clientX,
+      y: e.clientY,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip((prev) => ({ ...prev, show: false }));
+  };
+
+  // --- CARD RENDER HELPER ---
+  const renderAnalyticsCard = (title, mainValue, subText, icon, changeValue = null) => (
+    <div className="bg-gray-100 p-6 rounded-lg shadow-sm flex flex-col justify-between h-[120px] transition-transform hover:scale-[1.02] duration-200">
+      <div className="text-gray-600 text-sm">{title}</div>
+      <div className="flex justify-between items-center mt-auto">
+        <div>
+          <p className="text-2xl font-bold">{mainValue}</p>
+          {changeValue !== null && (
+            <p className="text-xs text-gray-500">{changeValue}% {subText}</p>
+          )}
+          {changeValue === null && subText && (
+            <p className="text-xs text-gray-500">{subText}</p>
+          )}
+        </div>
+        <div className="text-lime-700 p-2 rounded-full">{icon}</div>
       </div>
-      <div className="bg-gray-100 p-3 rounded-full">{icon}</div>
     </div>
   );
 
   return (
     <SharedSidebar>
-      <div className="px-12 pt-8 bg-white border-b">
+      <div className="flex flex-col gap-0 px-12 pt-8 bg-white border-b">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-[#9CAF88] rounded-lg flex items-center justify-center">
@@ -62,128 +173,216 @@ function Analytics() {
             </span>
           </div>
           <div className="relative w-[340px]">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#6A972E]" />
             <input
               type="search"
               placeholder="Search"
-              className="pl-4 pr-12 py-2 w-full border border-[#6A972E] rounded-full focus:outline-none bg-white text-gray-900"
+              className="pl-12 pr-12 py-2 w-full border border-[#6A972E] rounded-full focus:outline-none bg-white text-gray-900"
             />
           </div>
         </div>
       </div>
 
       <div className="p-6 flex flex-col gap-8">
+        {/* Header */}
         <div className="bg-[#6B8E23] text-white px-8 py-6 rounded-lg shadow">
           <h2 className="text-3xl font-bold">Analytics and Reports</h2>
         </div>
 
-        {/* Time period tabs */}
+        {/* Filters */}
         <div className="flex gap-2">
-          {["Today", "1 Week", "1 Month", "1 Year"].map((tab) => (
+          {["Today", "Week", "Month", "Year"].map((filter) => (
             <Button
-              key={tab}
-              variant="outline"
-              className={`${
-                activeTab === tab ? "bg-[#9CAF88] text-white" : "bg-white"
+              key={filter}
+              className={`px-6 py-2 rounded-lg ${
+                timeFilter === filter
+                  ? "bg-[#9CAF88] text-black"
+                  : "bg-gray-200 text-gray-700"
               }`}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => setTimeFilter(filter)}
             >
-              {tab}
+              {filter}
             </Button>
           ))}
         </div>
 
-        {/* Metrics Cards */}
+        {/* Metrics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <MetricCard
-            title="Total Revenue"
-            value={`₱${analyticsData.totalRevenue.toFixed(2)}`}
-            icon={<DollarSign size={24} color="#6A972E" />}
-          />
-          <MetricCard
-            title="Total Transactions"
-            value={analyticsData.totalTransactions}
-            icon={<ShoppingCart size={24} color="#6A972E" />}
-          />
-          <MetricCard
-            title="Average Order Value"
-            value={`₱${analyticsData.averageOrderValue.toFixed(2)}`}
-            icon={<LayoutGrid size={24} color="#6A972E" />}
-          />
-          <MetricCard
-            title="Peak Hours"
-            value={analyticsData.peakHours}
-            icon={<Clock size={24} color="#6A972E" />}
-          />
+          {renderAnalyticsCard(
+            "Total Revenue",
+            `₱${currentData.totalRevenue.toFixed(2)}`,
+            "vs previous period",
+            <DollarSign size={24} color="#6A972E" />,
+            currentData.revenueChange
+          )}
+          {renderAnalyticsCard(
+            "Total Transactions",
+            currentData.totalTransactions,
+            "orders processed",
+            <RefreshCcw size={24} color="#6A972E" />
+          )}
+          {renderAnalyticsCard(
+            "Average Order Value",
+            `₱${currentData.averageOrderValue.toFixed(2)}`,
+            "per transaction",
+            <BarChart2 size={24} color="#6A972E" />
+          )}
+          {renderAnalyticsCard(
+            "Peak Hours",
+            currentData.peakHours,
+            "busiest time",
+            <Calendar size={24} color="#6A972E" />
+          )}
         </div>
 
-        {/* Revenue Trend and Top Selling Items */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4">Revenue Trend</h3>
-            <div className="flex flex-col gap-4">
-              {analyticsData.revenueTrend.map((data) => (
-                <div key={data.day} className="flex items-center gap-4">
-                  <span className="w-10 text-sm">{data.day}</span>
-                  <div className="flex-1 bg-gray-200 rounded-full h-4">
-                    <div
-                      style={{ width: `${(data.value / 2500) * 100}%` }}
-                      className="bg-[#6B8E23] h-4 rounded-full"
-                    ></div>
-                  </div>
-                  <span className="text-sm font-medium">₱{data.value.toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4">Top Selling Items</h3>
+        {/* Revenue Trend */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            className="bg-white p-6 rounded-lg shadow relative"
+            onMouseLeave={handleMouseLeave}
+          >
+            <h3 className="text-xl font-bold mb-4">Revenue Trend</h3>
             <div className="space-y-4">
-              {analyticsData.topSellingItems.map((item, index) => (
-                <div key={item.name} className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-6 h-6 rounded-full bg-[#6B8E23] flex items-center justify-center text-white text-sm font-bold">
-                      {index + 1}
+              {currentData.revenueTrend.map((item, index) => {
+                const percentage = (item.value / maxValue) * 100;
+                const isSelected = selectedBar === index;
+                return (
+                  <div
+                    key={index}
+                    className={`flex items-center gap-4 cursor-pointer transition-all duration-300 ${
+                      isSelected ? "bg-green-50 p-2 rounded-xl" : ""
+                    }`}
+                    onClick={() => {
+                      setSelectedBar(index);
+                      setShowModal(true);
+                    }}
+                    onMouseMove={(e) => handleMouseMove(e, item)}
+                  >
+                    <span className="w-16 text-sm">{item.day}</span>
+                    <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
+                      <div
+                        style={{ width: `${percentage}%` }}
+                        className={`h-full rounded-full transition-all duration-300 ${
+                          isSelected ? "bg-[#94c83d]" : "bg-[#6A972E]"
+                        }`}
+                      ></div>
                     </div>
-                    <span className="font-medium">{item.name}</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      ₱{item.value.toLocaleString()}
+                    </span>
                   </div>
-                  <div className="flex-1 bg-gray-200 rounded-full h-2">
-                    <div
-                      style={{ width: `${(item.orders / 45) * 100}%` }}
-                      className="bg-[#9CAF88] h-2 rounded-full"
-                    ></div>
-                  </div>
-                  <span className="text-sm text-gray-600">{item.orders} orders</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
+
+            {/* Tooltip */}
+            {tooltip.show && (
+              <div
+                className="fixed bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-lg z-50 pointer-events-none opacity-0 animate-fade-in"
+                style={{
+                  left: tooltip.x,
+                  top: tooltip.y - 20,
+                  transform: "translateX(-50%)",
+                  transition: "all 0.1s ease-out",
+                }}
+              >
+                {tooltip.day}: ₱{tooltip.value.toLocaleString()}
+              </div>
+            )}
+          </div>
+
+          {/* Top Selling Items */}
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-xl font-bold mb-4">Top Selling Items</h3>
+            {currentData.topSellingItems.map((item, index) => (
+              <div key={index} className="flex items-center gap-4 py-2">
+                <span className="text-lg font-bold text-gray-500">
+                  {index + 1}.
+                </span>
+                <div className="flex-1">
+                  <h4 className="font-semibold">{item.name}</h4>
+                  <span className="text-sm text-gray-500">
+                    {item.quantity} orders
+                  </span>
+                </div>
+                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                  <div
+                    style={{
+                      width: `${
+                        (item.quantity /
+                          currentData.topSellingItems[0].quantity) *
+                        100
+                      }%`,
+                    }}
+                    className="bg-[#6A972E] rounded-full h-full"
+                  ></div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Sales Overview Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow flex flex-col gap-2">
-            <h3 className="text-lg font-semibold">Best Performance</h3>
-            <p className="text-sm text-gray-600">{analyticsData.bestPerformance}</p>
-            <p className="text-xl font-bold mt-2">{analyticsData.topSellingItems.find(item => item.name === analyticsData.bestPerformance)?.orders} orders</p>
+        {/* Performance Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-xl font-bold mb-2">Best Performance</h3>
+            <p className="text-2xl font-semibold">
+              {currentData.bestPerformance.orders} orders
+            </p>
+            <p className="text-sm text-gray-500 mt-1">Based on this period</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow flex flex-col gap-2">
-            <h3 className="text-lg font-semibold">Highest Revenue</h3>
-            <p className="text-sm text-gray-600">{analyticsData.highestRevenue}</p>
-            <p className="text-xl font-bold mt-2">₱576.80</p>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-xl font-bold mb-2">Highest Revenue</h3>
+            <p className="text-2xl font-semibold">
+              ₱{currentData.highestRevenue.amount.toFixed(2)}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              From a single transaction
+            </p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow flex flex-col gap-2">
-            <h3 className="text-lg font-semibold">Growth Rate</h3>
-            <div className="flex items-center gap-2 mt-2">
-              <CircleArrowUp size={24} className="text-green-500" />
-              <span className="text-2xl font-bold text-green-600">
-                +{analyticsData.growthRate}%
-              </span>
-            </div>
-            <p className="text-sm text-gray-500">This today</p>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-xl font-bold mb-2">Growth Rate</h3>
+            <p className="text-2xl font-semibold text-green-500">
+              +{currentData.growthRate.percentage}%
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Compared to previous period
+            </p>
           </div>
         </div>
       </div>
+
+      {/* MODAL */}
+      {showModal && selectedBar !== null && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-[400px]">
+            <h3 className="text-xl font-bold mb-4 text-[#6A972E]">
+              Revenue Details
+            </h3>
+            <p className="text-gray-700 mb-2">
+              <strong>Period:</strong> {currentData.revenueTrend[selectedBar].day}
+            </p>
+            <p className="text-gray-700 mb-2">
+              <strong>Revenue:</strong> ₱
+              {currentData.revenueTrend[selectedBar].value.toLocaleString()}
+            </p>
+            <p className="text-gray-700 mb-4">
+              <strong>Performance:</strong>{" "}
+              {(
+                (currentData.revenueTrend[selectedBar].value / maxValue) *
+                100
+              ).toFixed(1)}
+              % of the highest revenue in this {timeFilter.toLowerCase()}.
+            </p>
+            <Button
+              className="w-full bg-[#6A972E] text-white"
+              onClick={() => setShowModal(false)}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
     </SharedSidebar>
   );
 }

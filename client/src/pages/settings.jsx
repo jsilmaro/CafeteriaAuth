@@ -133,7 +133,8 @@ export default function SettingsPage() {
   };
 
   const handleSaveChanges = () => {
-    alert("Settings saved successfully!");
+     
+    window.alert("Settings saved successfully!");
   };
 
   const tabs = [

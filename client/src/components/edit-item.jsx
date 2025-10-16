@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { ChevronsUpDown, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
@@ -58,7 +57,7 @@ function EditItemModal({ isOpen, onClose, onSave, item, onDelete, categories }) 
 
   useEffect(() => {
     if (isOpen) {
-      console.log("🟢 EditItemModal opened for item:", item?.name ?? "(new)");
+      // Modal opened for editing
     }
   }, [isOpen, item]);
 
@@ -105,6 +104,7 @@ function EditItemModal({ isOpen, onClose, onSave, item, onDelete, categories }) 
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
+                        // eslint-disable-next-line no-undef
                         const reader = new FileReader();
                         reader.onloadend = () => {
                           setFormData({ ...formData, photoURL: reader.result });

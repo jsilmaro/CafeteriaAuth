@@ -9,7 +9,7 @@ export default function FoodCard({
   name,
   description,
   price,
-  availability,
+  availability: _availability,
   amountOfStock,
   photoURL,
   onEdit,
