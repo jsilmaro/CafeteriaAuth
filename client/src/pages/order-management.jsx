@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent } from '../components/ui/card';
 import { Filter, Search, Loader2 } from 'lucide-react';
@@ -72,44 +71,34 @@ export default function OrderManagementPage() {
 
   return (
     <SharedSidebar>
-      {/* Header */}
-      <div className="bg-white border-b px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-[#6A972E] rounded-lg flex items-center justify-center text-white font-bold text-lg">
-              F
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900">FASPeCC</h1>
+      {/* Top Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-semibold text-gray-900">Order Management</h1>
           </div>
-          
-          {/* Search Bar */}
-          <div className="flex-1 max-w-md mx-8">
+          <div className="flex items-center space-x-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Search"
+              <input 
+                placeholder="Search" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-10 rounded-full"
+                className="pl-10 w-80 border border-gray-300 rounded-md px-3 py-2"
                 data-testid="search-orders-input"
               />
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
-                data-testid="filter-button"
-              >
-                <Filter className="h-4 w-4" />
-              </Button>
             </div>
+            <Button variant="outline" size="sm" data-testid="filter-button">
+              <Filter className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Main Content */}
       <div className="p-6">
         {/* Page Header */}
-        <div className="bg-[#6A972E] text-white p-6 rounded-lg mb-6">
+        <div className="bg-[#6B8E23] text-white p-6 rounded-lg mb-6">
           <h2 className="text-2xl font-bold">Order Management</h2>
           <p className="text-green-100 mt-1">Manage and track all cafeteria orders in real-time.</p>
         </div>

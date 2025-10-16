@@ -4,6 +4,7 @@ import {
   RefreshCcw,
   BarChart2,
   Search,
+  Filter,
 } from "lucide-react";
 import SharedSidebar from "../components/shared-sidebar";
 import { Button } from "../components/ui/button";
@@ -162,31 +163,32 @@ function Analytics() {
 
   return (
     <SharedSidebar>
-      <div className="flex flex-col gap-0 px-12 pt-8 bg-white border-b">
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-[#9CAF88] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">F</span>
-            </div>
-            <span className="text-[2rem] font-bold text-[#6A972E] tracking-tight">
-              FASPeCC
-            </span>
+      {/* Top Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-semibold text-gray-900">Analytics and Reports</h1>
           </div>
-          <div className="relative w-[340px]">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#6A972E]" />
-            <input
-              type="search"
-              placeholder="Search"
-              className="pl-12 pr-12 py-2 w-full border border-[#6A972E] rounded-full focus:outline-none bg-white text-gray-900"
-            />
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input 
+                placeholder="Search" 
+                className="pl-10 w-80 border border-gray-300 rounded-md px-3 py-2"
+              />
+            </div>
+            <Button variant="outline" size="sm">
+              <Filter className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="p-6 flex flex-col gap-8">
-        {/* Header */}
-        <div className="bg-[#6B8E23] text-white px-8 py-6 rounded-lg shadow">
-          <h2 className="text-3xl font-bold">Analytics and Reports</h2>
+        {/* Page Header */}
+        <div className="bg-[#6B8E23] text-white p-6 rounded-lg mb-6">
+          <h2 className="text-2xl font-bold">Analytics and Reports</h2>
+          <p className="text-green-100 mt-1">Track performance, revenue, and customer insights</p>
         </div>
 
         {/* Filters */}

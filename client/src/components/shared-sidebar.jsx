@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
+import ustpLogo from "../assets/ustp-logo.png";
 
 export default function SharedSidebar({ children }) {
   const { logoutMutation } = useAuth();
@@ -61,9 +62,7 @@ export default function SharedSidebar({ children }) {
         {/* Logo Header */}
         <div className="p-6" style={{backgroundColor: '#9CAF88'}}>
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-              <span className="text-green-700 font-bold text-lg">F</span>
-            </div>
+            <img src={ustpLogo} alt="USTP Logo" className="w-8 h-8" />
             {!isCollapsed && (
               <span className="text-white font-semibold text-lg">FASPeCC</span>
             )}

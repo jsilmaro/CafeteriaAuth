@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -10,6 +10,7 @@ import {
 import { RatingDistribution } from "../components/RatingDistribution";
 import { FilterPills } from "../components/FilterPills";
 import { FeedbackCard } from "../components/FeedbackCard";
+import { Button } from "../components/ui/button";
 /**
  * @typedef {Object} Feedback
  * @property {string} id
@@ -126,34 +127,36 @@ export default function CustomerFeedback() {
 
   return (
     <SharedSidebar>
-      {/* Header Bar */}
-      <div className="flex flex-col gap-0 px-12 pt-8 bg-white border-b">
-        <div className="flex items-center gap-8">
-          <span className="text-[2rem] font-bold text-[#6A972E] tracking-tight">FASPeCC</span>
-          <div className="relative w-[340px]">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#6A972E]" />
-            <input
-              type="search"
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 pr-12 py-2 w-full border border-[#6A972E] rounded-full focus:outline-none bg-white text-gray-900"
-              style={{ fontSize: '1rem' }}
-            />
-            <button className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6A972E]">
-              <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 21v-2a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </button>
+      {/* Top Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-semibold text-gray-900">Customer Feedback</h1>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <input 
+                placeholder="Search" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 w-80 border border-gray-300 rounded-md px-3 py-2"
+              />
+            </div>
+            <Button variant="outline" size="sm">
+              <Filter className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-        <div className="bg-[#6B8E23] text-white px-8 py-6 rounded-lg flex items-center justify-between shadow mt-6 mb-2">
-          <div>
-            <h2 className="text-3xl font-bold">Customer Feedback</h2>
-            <p className="text-lg mt-2">Review and analyze customer comments and ratings.</p>
-          </div>
-        </div>
-      </div>
+      </header>
 
-      <div className="p-6 space-y-6 max-w-7xl mx-auto">
+      <div className="p-6 space-y-4">
+        {/* Page Header */}
+        <div className="bg-[#6B8E23] text-white p-6 rounded-lg">
+          <h2 className="text-2xl font-bold">Customer Feedback</h2>
+          <p className="text-green-100 mt-1">Review and analyze customer comments and ratings</p>
+        </div>
+
         <RatingDistribution distribution={distribution} />
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
