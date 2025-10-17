@@ -104,7 +104,7 @@ export default function HomePage() {
           <div className="px-4 sm:px-6 py-3 sm:py-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">FASPeCC</h1>
+                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Seller Dashboard</h1>
               </div>
               <div className="flex items-center space-x-2 sm:space-x-4">
                 <div className="relative flex-1 sm:flex-initial">
