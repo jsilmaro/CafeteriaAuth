@@ -11,7 +11,9 @@ import {
   Settings,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Menu,
+  X
 } from "lucide-react";
 import ustpLogo from "../assets/ustp-logo.png";
 
@@ -19,6 +21,7 @@ export default function SharedSidebar({ children }) {
   const { logoutMutation } = useAuth();
   const [location] = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Load sidebar state from localStorage
   useEffect(() => {
@@ -50,17 +53,48 @@ export default function SharedSidebar({ children }) {
   ].filter(item => item.implemented); // Only show implemented routes
 
   return (
-    <div className="flex h-screen overflow-hidden"> {/* Changed min-h-screen to h-screen and added overflow-hidden */}
-      {/* Sidebar */}
+    <div className="flex h-screen overflow-hidden">
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b shadow-sm" style={{backgroundColor: '#9CAF88'}}>
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center space-x-2">
+            <img src={ustpLogo} alt="USTP Logo" className="w-8 h-8" />
+            <span className="text-white font-semibold text-base">FASPeCC</span>
+          </div>
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+            data-testid="mobile-menu-toggle"
+          >
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/50 z-40 mt-[57px]"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar - Desktop & Mobile */}
       <aside 
         className={cn(
-          "bg-white shadow-sm flex flex-col transition-all duration-300 ease-in-out",
-          isCollapsed ? "w-16" : "w-64"
+          "bg-white shadow-sm flex flex-col transition-all duration-300 ease-in-out z-40",
+          // Mobile styles
+          "lg:relative fixed top-[57px] lg:top-0 left-0 h-[calc(100vh-57px)] lg:h-screen",
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+          // Desktop styles
+          isCollapsed ? "lg:w-16" : "lg:w-64",
+          // Mobile width
+          "w-64"
         )}
         data-testid="sidebar"
       >
-        {/* Logo Header */}
-        <div className="p-6" style={{backgroundColor: '#9CAF88'}}>
+        {/* Logo Header - Desktop only */}
+        <div className="p-4 lg:p-6 hidden lg:block" style={{backgroundColor: '#9CAF88'}}>
           <div className="flex items-center space-x-3">
             <img src={ustpLogo} alt="USTP Logo" className="w-8 h-8" />
             {!isCollapsed && (
@@ -69,8 +103,8 @@ export default function SharedSidebar({ children }) {
           </div>
         </div>
 
-        {/* Toggle Button */}
-        <div className="px-4 py-2 border-b">
+        {/* Toggle Button - Desktop only */}
+        <div className="px-4 py-2 border-b hidden lg:block">
           <button
             onClick={toggleSidebar}
             className="w-full flex items-center justify-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
@@ -86,9 +120,9 @@ export default function SharedSidebar({ children }) {
 
         {/* Management Section */}
         <div className="p-4 flex-1 overflow-y-auto">
-          {!isCollapsed && (
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Management</p>
-          )}
+          <p className="text-xs text-gray-500 uppercase tracking-wider mb-3 lg:block" style={{display: isCollapsed ? 'none' : 'block'}}>
+            Management
+          </p>
           <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -96,9 +130,10 @@ export default function SharedSidebar({ children }) {
               return (
                 <Link key={item.id} href={item.path}>
                   <button
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
                       "w-full flex items-center rounded-lg text-left transition-colors",
-                      isCollapsed ? "justify-center p-3" : "space-x-3 px-3 py-2",
+                      isCollapsed ? "lg:justify-center lg:p-3" : "space-x-3 px-3 py-2",
                       isActive 
                         ? "text-white" 
                         : "text-gray-700 hover:bg-gray-100"
@@ -107,10 +142,10 @@ export default function SharedSidebar({ children }) {
                     data-testid={`nav-${item.id}`}
                     title={isCollapsed ? item.label : undefined}
                   >
-                    <Icon className="h-4 w-4 flex-shrink-0" />
-                    {!isCollapsed && (
-                      <span className="text-sm">{item.label}</span>
-                    )}
+                    <Icon className="h-5 w-5 lg:h-4 lg:w-4 flex-shrink-0" />
+                    <span className={cn("text-sm", isCollapsed && "lg:hidden")}>
+                      {item.label}
+                    </span>
                   </button>
                 </Link>
               );
@@ -119,27 +154,27 @@ export default function SharedSidebar({ children }) {
         </div>
 
         {/* Sign Out */}
-        <div className="p-4">
+        <div className="p-4 border-t">
           <button
             onClick={handleLogout}
             disabled={logoutMutation.isPending}
             className={cn(
               "w-full flex items-center text-gray-700 hover:bg-gray-100 rounded-lg transition-colors",
-              isCollapsed ? "justify-center p-3" : "space-x-3 px-3 py-2"
+              isCollapsed ? "lg:justify-center lg:p-3" : "space-x-3 px-3 py-2"
             )}
             data-testid="button-logout"
             title={isCollapsed ? "Sign Out" : undefined}
           >
-            <LogOut className="h-4 w-4 flex-shrink-0" />
-            {!isCollapsed && (
-              <span className="text-sm">{logoutMutation.isPending ? "Signing Out..." : "Sign Out"}</span>
-            )}
+            <LogOut className="h-5 w-5 lg:h-4 lg:w-4 flex-shrink-0" />
+            <span className={cn("text-sm", isCollapsed && "lg:hidden")}>
+              {logoutMutation.isPending ? "Signing Out..." : "Sign Out"}
+            </span>
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-gray-100">
+      <main className="flex-1 overflow-y-auto bg-gray-100 pt-[57px] lg:pt-0">
         {children}
       </main>
     </div>

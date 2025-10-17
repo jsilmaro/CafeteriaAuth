@@ -168,50 +168,52 @@ function CafeteriaInventory() {
     <SharedSidebar>
       {/* Top Header */}
       <header className="bg-white shadow-sm border-b">
-        <div className="px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-semibold text-gray-900">Inventory Management</h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input 
-                placeholder="Search" 
-                value={searchQuery}
-                onChange={handleSearchChange}
-                className="pl-10 w-80 border border-gray-300 rounded-md px-3 py-2"
-              />
+        <div className="px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900">Inventory Management</h1>
             </div>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="relative flex-1 sm:flex-initial">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input 
+                  placeholder="Search" 
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="pl-10 w-full sm:w-60 md:w-80 border border-gray-300 rounded-md px-3 py-2 text-sm"
+                />
+              </div>
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="p-6 flex flex-col gap-8">
+      <div className="p-4 sm:p-6 flex flex-col gap-6 sm:gap-8">
         {/* Page Header */}
-        <div className="bg-[#6B8E23] text-white p-8 rounded-lg mb-6 flex items-center justify-between min-h-[120px]">
+        <div className="bg-[#6B8E23] text-white p-4 sm:p-6 lg:p-8 rounded-lg flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 min-h-[100px] sm:min-h-[120px]">
           <div className="flex-1">
-            <h2 className="text-3xl font-bold">Inventory Management</h2>
-            <p className="text-green-100 mt-2 text-lg">Track stock levels, update product quantities, and manage suppliers</p>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">Inventory Management</h2>
+            <p className="text-green-100 mt-1 sm:mt-2 text-sm sm:text-base lg:text-lg">Track stock levels, update product quantities, and manage suppliers</p>
           </div>
-          <div className="ml-6">
+          <div className="w-full lg:w-auto lg:ml-6">
             <Button
-              className="bg-[#9CAF88] text-black px-8 py-4 rounded-lg text-lg font-semibold flex items-center gap-3 hover:bg-[#8CA86E] shadow-lg"
+              className="bg-[#9CAF88] text-black px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 rounded-lg text-sm sm:text-base lg:text-lg font-semibold flex items-center justify-center gap-2 sm:gap-3 hover:bg-[#8CA86E] shadow-lg w-full lg:w-auto"
               onClick={() => setIsAddModalOpen(true)}
             >
-              <Plus size={28} /> Add New Item
+              <Plus size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7" /> Add New Item
             </Button>
           </div>
         </div>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-48 flex justify-between items-center">
-                  <span>Availability: {filter}</span>
-                  <ChevronRight className="ml-2 h-4 w-4" />
+                <Button variant="outline" className="w-full sm:w-48 flex justify-between items-center text-sm">
+                  <span className="truncate">Availability: {filter}</span>
+                  <ChevronRight className="ml-2 h-4 w-4 flex-shrink-0" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-48">
@@ -233,9 +235,9 @@ function CafeteriaInventory() {
             {/* NEW: Second dropdown for categories */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-48 flex justify-between items-center">
-                  <span>Category: {categoryFilter}</span>
-                  <ChevronRight className="ml-2 h-4 w-4" />
+                <Button variant="outline" className="w-full sm:w-48 flex justify-between items-center text-sm">
+                  <span className="truncate">Category: {categoryFilter}</span>
+                  <ChevronRight className="ml-2 h-4 w-4 flex-shrink-0" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-48">
@@ -251,17 +253,17 @@ function CafeteriaInventory() {
             </DropdownMenu>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {inventoryData.map((item, index) => (
-              <div key={index} className="bg-white p-4 rounded-lg shadow">
-                <div className="flex items-center justify-between p-3">
-                  <div className="flex flex-col gap-1">
-                    <h3 className="text-gray-600 text-sm">{item.name}</h3>
-                    <p className="text-2xl font-semibold">
+              <div key={index} className="bg-white p-3 sm:p-4 rounded-lg shadow">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:p-3">
+                  <div className="flex flex-col gap-1 flex-1">
+                    <h3 className="text-gray-600 text-xs sm:text-sm">{item.name}</h3>
+                    <p className="text-lg sm:text-xl lg:text-2xl font-semibold">
                       {item.numberOfItems} items
                     </p>
                   </div>
-                  <div className="bg-gray-100 p-3 rounded-full">
+                  <div className="bg-gray-100 p-2 sm:p-3 rounded-full flex-shrink-0">
                     <div className="text-gray-600">{item.icon}</div>
                   </div>
                 </div>
@@ -269,7 +271,7 @@ function CafeteriaInventory() {
             ))}
           </div>
 
-          <div className="grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {filteredItems.map((food) => (
               <FoodCard
                 key={food.id}

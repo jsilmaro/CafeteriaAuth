@@ -30,7 +30,7 @@ export default function LandingPage() {
   };
 
   const handleStudentAccess = () => {
-    window.open('https://sotf-enggg.vercel.app', '_blank');
+    window.open('https://e-faspecc.vercel.app', '_blank');
   };
 
   const accessTypes = [
@@ -104,41 +104,41 @@ export default function LandingPage() {
         
         <div className="relative z-10">
           {/* Header */}
-          <header className="px-6 py-4">
+          <header className="px-4 sm:px-6 py-4">
             <div className="flex items-center justify-between max-w-7xl mx-auto">
-              <div className="flex items-center space-x-3">
-                <img src={ustpLogo} alt="USTP Logo" className="w-12 h-12" />
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <img src={ustpLogo} alt="USTP Logo" className="w-10 h-10 sm:w-12 sm:h-12" />
                 <div>
-                  <h1 className="text-xl font-bold text-white">USTP Cafeteria</h1>
-                  <p className="text-green-200 text-sm">Management System</p>
+                  <h1 className="text-base sm:text-xl font-bold text-white">USTP Cafeteria</h1>
+                  <p className="text-green-200 text-xs sm:text-sm">Management System</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="h-5 w-5 text-green-400" />
-                <span className="text-green-200 text-sm">System Online</span>
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-400" />
+                <span className="text-green-200 text-xs sm:text-sm hidden sm:inline">System Online</span>
               </div>
             </div>
           </header>
 
           {/* Hero Content */}
-          <div className="px-6 py-16 text-center">
+          <div className="px-4 sm:px-6 py-8 sm:py-12 lg:py-16 text-center">
             <div className="max-w-4xl mx-auto">
-              <h1 className="text-5xl font-bold text-white mb-6">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
                 Welcome to USTP Cafeteria
               </h1>
-              <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-green-100 mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
                 Your comprehensive food service management platform. Choose your access level to get started.
               </p>
               
               {/* Quick Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 max-w-3xl mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-12 max-w-3xl mx-auto">
                 {stats.map((stat) => {
                   const Icon = stat.icon;
                   return (
-                    <div key={stat.label} className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                      <Icon className="h-8 w-8 text-green-300 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-white">{stat.value}</div>
-                      <div className="text-green-200 text-sm">{stat.label}</div>
+                    <div key={stat.label} className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
+                      <Icon className="h-6 w-6 sm:h-8 sm:w-8 text-green-300 mx-auto mb-1 sm:mb-2" />
+                      <div className="text-lg sm:text-xl md:text-2xl font-bold text-white">{stat.value}</div>
+                      <div className="text-green-200 text-xs sm:text-sm">{stat.label}</div>
                     </div>
                   );
                 })}
@@ -149,18 +149,18 @@ export default function LandingPage() {
       </div>
 
       {/* Access Types Section */}
-      <div className="py-16 px-6">
+      <div className="py-8 sm:py-12 lg:py-16 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
               Choose Your Access Level
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-2xl mx-auto px-4">
               Select the appropriate access level based on your role in the USTP Cafeteria system.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {accessTypes.map((access) => {
               const Icon = access.icon;
               return (
@@ -180,35 +180,35 @@ export default function LandingPage() {
                   }}
                 >
                   {/* Header with Icon and Badge */}
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center justify-between mb-4">
+                  <CardHeader className="pb-3 sm:pb-4">
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
                       <div className={cn(
-                        "w-16 h-16 rounded-full flex items-center justify-center text-white transition-all duration-300",
+                        "w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center text-white transition-all duration-300",
                         access.color,
                         hoveredCard === access.id && access.hoverColor
                       )}>
-                        <Icon className="h-8 w-8" />
+                        <Icon className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" />
                       </div>
-                      <Badge className={access.badgeColor}>
+                      <Badge className={cn(access.badgeColor, "text-xs sm:text-sm")}>
                         {access.badge}
                       </Badge>
                     </div>
-                    <CardTitle className="text-2xl font-bold text-gray-900 group-hover:text-gray-700">
+                    <CardTitle className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 group-hover:text-gray-700">
                       {access.title}
                     </CardTitle>
                   </CardHeader>
 
                   <CardContent className="pt-0">
-                    <p className="text-gray-600 mb-6 leading-relaxed">
+                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">
                       {access.description}
                     </p>
                     
                     {/* Features List */}
-                    <div className="space-y-3 mb-8">
+                    <div className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
                       {access.features.map((feature, index) => (
-                        <div key={index} className="flex items-center space-x-3">
-                          <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                          <span className="text-gray-700 text-sm">{feature}</span>
+                        <div key={index} className="flex items-center space-x-2 sm:space-x-3">
+                          <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 flex-shrink-0" />
+                          <span className="text-gray-700 text-xs sm:text-sm">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -216,14 +216,14 @@ export default function LandingPage() {
                     {/* Action Button */}
                     <Button 
                       className={cn(
-                        "w-full transition-all duration-300 flex items-center justify-center space-x-2",
+                        "w-full transition-all duration-300 flex items-center justify-center space-x-2 text-sm sm:text-base py-2 sm:py-3",
                         access.color,
                         access.hoverColor,
                         "hover:shadow-lg"
                       )}
                     >
                       <span>Access {access.title}</span>
-                      <ArrowRight className="h-4 w-4" />
+                      <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                   </CardContent>
 
@@ -240,64 +240,64 @@ export default function LandingPage() {
       </div>
 
       {/* Features Section */}
-      <div className="py-16 px-6 bg-gray-50">
+      <div className="py-8 sm:py-12 lg:py-16 px-4 sm:px-6 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
               System Features
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-sm sm:text-base lg:text-lg text-gray-600 px-4">
               Comprehensive tools for efficient cafeteria management
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Clock className="h-8 w-8 text-blue-600" />
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <Clock className="h-7 w-7 sm:h-8 sm:w-8 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Real-time Orders</h3>
-              <p className="text-gray-600 text-sm">Track and process orders in real-time</p>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Real-time Orders</h3>
+              <p className="text-gray-600 text-xs sm:text-sm">Track and process orders in real-time</p>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BarChart3 className="h-8 w-8 text-green-600" />
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <BarChart3 className="h-7 w-7 sm:h-8 sm:w-8 text-green-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Analytics</h3>
-              <p className="text-gray-600 text-sm">Comprehensive reporting and insights</p>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Analytics</h3>
+              <p className="text-gray-600 text-xs sm:text-sm">Comprehensive reporting and insights</p>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-purple-600" />
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <Users className="h-7 w-7 sm:h-8 sm:w-8 text-purple-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">User Management</h3>
-              <p className="text-gray-600 text-sm">Manage staff and student accounts</p>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">User Management</h3>
+              <p className="text-gray-600 text-xs sm:text-sm">Manage staff and student accounts</p>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ChefHat className="h-8 w-8 text-orange-600" />
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <ChefHat className="h-7 w-7 sm:h-8 sm:w-8 text-orange-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Menu Management</h3>
-              <p className="text-gray-600 text-sm">Update and manage menu items</p>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Menu Management</h3>
+              <p className="text-gray-600 text-xs sm:text-sm">Update and manage menu items</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 px-6">
+      <footer className="bg-gray-900 text-white py-6 sm:py-8 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <img src={ustpLogo} alt="USTP Logo" className="w-8 h-8" />
-            <span className="text-lg font-semibold">USTP Cafeteria</span>
+          <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+            <img src={ustpLogo} alt="USTP Logo" className="w-6 h-6 sm:w-8 sm:h-8" />
+            <span className="text-base sm:text-lg font-semibold">USTP Cafeteria</span>
           </div>
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-400 text-xs sm:text-sm px-4">
             © 2024 University of Science and Technology of Southern Philippines
           </p>
-          <p className="text-gray-500 text-xs mt-2">
+          <p className="text-gray-500 text-xs mt-1 sm:mt-2">
             Food Service Management System v2.0
           </p>
         </div>

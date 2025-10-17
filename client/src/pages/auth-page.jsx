@@ -137,9 +137,9 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Panel - Sage Green with Cafeteria Background */}
-      <div className="hidden lg:flex lg:w-2/5 relative overflow-hidden" style={{backgroundColor: '#9CAF88'}}>
+      <div className="hidden md:flex md:w-2/5 lg:w-2/5 relative overflow-hidden" style={{backgroundColor: '#9CAF88'}}>
         {/* Background Image with Less Opacity */}
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-20"
@@ -148,21 +148,21 @@ export default function AuthPage() {
         <div className="absolute inset-0" style={{backgroundColor: 'rgba(156, 175, 136, 0.8)'}}></div>
         
         {/* Intro Content */}
-        <div className="relative z-10 flex flex-col justify-center items-center p-12 text-center">
-          <div className="text-white space-y-6 max-w-sm">
-            <h1 className="text-4xl font-bold leading-tight">Welcome to USTP Cafeteria</h1>
-            <p className="text-xl text-white/90">Your gateway to efficient food service management</p>
-            <div className="space-y-3 text-white/80">
+        <div className="relative z-10 flex flex-col justify-center items-center p-6 md:p-8 lg:p-12 text-center">
+          <div className="text-white space-y-4 md:space-y-6 max-w-sm">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">Welcome to USTP Cafeteria</h1>
+            <p className="text-base md:text-lg lg:text-xl text-white/90">Your gateway to efficient food service management</p>
+            <div className="space-y-2 md:space-y-3 text-sm md:text-base text-white/80">
               <p className="flex items-center justify-center space-x-2">
-                <span className="w-2 h-2 bg-white/60 rounded-full"></span>
+                <span className="w-2 h-2 bg-white/60 rounded-full flex-shrink-0"></span>
                 <span>Streamlined ordering system</span>
               </p>
               <p className="flex items-center justify-center space-x-2">
-                <span className="w-2 h-2 bg-white/60 rounded-full"></span>
+                <span className="w-2 h-2 bg-white/60 rounded-full flex-shrink-0"></span>
                 <span>Real-time inventory tracking</span>
               </p>
               <p className="flex items-center justify-center space-x-2">
-                <span className="w-2 h-2 bg-white/60 rounded-full"></span>
+                <span className="w-2 h-2 bg-white/60 rounded-full flex-shrink-0"></span>
                 <span>Staff coordination tools</span>
               </p>
             </div>
@@ -171,31 +171,31 @@ export default function AuthPage() {
       </div>
 
       {/* Right Panel - Authentication Forms */}
-      <div className="flex-1 lg:w-3/5 flex flex-col items-center justify-center p-6 lg:p-12 bg-gray-50">
+      <div className="flex-1 md:w-3/5 lg:w-3/5 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-12 bg-gray-50">
         <div className="w-full max-w-md">
           {/* Logo and Header - Outside the auth box */}
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 mx-auto mb-4">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4">
               <img src={ustpLogo} alt="USTP Logo" className="w-full h-full object-contain" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">USTP Cafeteria</h1>
-            <p className="text-gray-600 text-sm mb-6">Staff Portal - Food Ordering System</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">USTP Cafeteria</h1>
+            <p className="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-6">Staff Portal - Food Ordering System</p>
           </div>
 
           {/* Auth Card - Only covers authentication */}
-          <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-8">
+          <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-4 sm:p-6 md:p-8">
             {/* Staff Access Header */}
-            <div className="text-center mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Staff Access</h2>
-              <p className="text-gray-600 text-sm">Sign in to manage food orders and inventory</p>
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Staff Access</h2>
+              <p className="text-gray-600 text-xs sm:text-sm">Sign in to manage food orders and inventory</p>
             </div>
 
             {/* Auth Tabs */}
-            <div className="flex mb-8 bg-gray-100 rounded-lg p-1">
+            <div className="flex mb-6 sm:mb-8 bg-gray-100 rounded-lg p-1">
               <button 
                 onClick={() => setAuthMode('signin')}
                 className={cn(
-                  "flex-1 py-3 px-4 text-sm font-medium rounded-md transition-all duration-200",
+                  "flex-1 py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium rounded-md transition-all duration-200",
                   authMode === 'signin' 
                     ? "bg-white text-gray-900 shadow-sm" 
                     : "text-gray-600"
@@ -219,7 +219,7 @@ export default function AuthPage() {
               <button 
                 onClick={() => setAuthMode('register')}
                 className={cn(
-                  "flex-1 py-3 px-4 text-sm font-medium rounded-md transition-all duration-200",
+                  "flex-1 py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium rounded-md transition-all duration-200",
                   authMode === 'register' 
                     ? "bg-white text-gray-900 shadow-sm" 
                     : "text-gray-600"
@@ -244,7 +244,7 @@ export default function AuthPage() {
 
             {/* Sign In Form */}
             {authMode === 'signin' && (
-              <form onSubmit={signinForm.handleSubmit(handleSignIn)} className="space-y-6" data-testid="form-signin">
+              <form onSubmit={signinForm.handleSubmit(handleSignIn)} className="space-y-4 sm:space-y-6" data-testid="form-signin">
                 <div>
                   <Label htmlFor="signin-email" className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
@@ -340,7 +340,7 @@ export default function AuthPage() {
 
             {/* Register Form */}
             {authMode === 'register' && (
-              <form onSubmit={registerForm.handleSubmit(handleRegister)} className="space-y-6" data-testid="form-register">
+              <form onSubmit={registerForm.handleSubmit(handleRegister)} className="space-y-4 sm:space-y-6" data-testid="form-register">
                 <div>
                   <Label htmlFor="register-fullname" className="block text-sm font-medium text-gray-700 mb-2">
                     Full Name
@@ -504,7 +504,7 @@ export default function AuthPage() {
           </div>
 
           {/* Footer */}
-          <div className="text-center mt-8 text-sm text-gray-500">
+          <div className="text-center mt-6 sm:mt-8 text-xs sm:text-sm text-gray-500 px-4">
             <p>&copy; 2024 University of Science and Technology of Southern Philippines</p>
             <p>Cafeteria Management System</p>
           </div>

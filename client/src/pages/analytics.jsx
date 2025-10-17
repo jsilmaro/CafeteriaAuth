@@ -144,19 +144,19 @@ function Analytics() {
 
   // --- CARD RENDER HELPER ---
   const renderAnalyticsCard = (title, mainValue, subText, icon, changeValue = null) => (
-    <div className="bg-gray-100 p-6 rounded-lg shadow-sm flex flex-col justify-between h-[120px] transition-transform hover:scale-[1.02] duration-200">
-      <div className="text-gray-600 text-sm">{title}</div>
-      <div className="flex justify-between items-center mt-auto">
-        <div>
-          <p className="text-2xl font-bold">{mainValue}</p>
+    <div className="bg-gray-100 p-3 sm:p-4 lg:p-6 rounded-lg shadow-sm flex flex-col justify-between min-h-[100px] sm:h-[120px] transition-transform hover:scale-[1.02] duration-200">
+      <div className="text-gray-600 text-xs sm:text-sm">{title}</div>
+      <div className="flex justify-between items-center mt-auto gap-2">
+        <div className="flex-1 min-w-0">
+          <p className="text-lg sm:text-xl lg:text-2xl font-bold truncate">{mainValue}</p>
           {changeValue !== null && (
             <p className="text-xs text-gray-500">{changeValue}% {subText}</p>
           )}
           {changeValue === null && subText && (
-            <p className="text-xs text-gray-500">{subText}</p>
+            <p className="text-xs text-gray-500 truncate">{subText}</p>
           )}
         </div>
-        <div className="text-lime-700 p-2 rounded-full">{icon}</div>
+        <div className="text-lime-700 p-1 sm:p-2 rounded-full flex-shrink-0">{icon}</div>
       </div>
     </div>
   );
@@ -165,38 +165,40 @@ function Analytics() {
     <SharedSidebar>
       {/* Top Header */}
       <header className="bg-white shadow-sm border-b">
-        <div className="px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-semibold text-gray-900">Analytics and Reports</h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input 
-                placeholder="Search" 
-                className="pl-10 w-80 border border-gray-300 rounded-md px-3 py-2"
-              />
+        <div className="px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900">Analytics and Reports</h1>
             </div>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="relative flex-1 sm:flex-initial">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input 
+                  placeholder="Search" 
+                  className="pl-10 w-full sm:w-60 md:w-80 border border-gray-300 rounded-md px-3 py-2 text-sm"
+                />
+              </div>
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="p-6 flex flex-col gap-8">
+      <div className="p-4 sm:p-6 flex flex-col gap-6 sm:gap-8">
         {/* Page Header */}
-        <div className="bg-[#6B8E23] text-white p-6 rounded-lg mb-6">
-          <h2 className="text-2xl font-bold">Analytics and Reports</h2>
-          <p className="text-green-100 mt-1">Track performance, revenue, and customer insights</p>
+        <div className="bg-[#6B8E23] text-white p-4 sm:p-6 rounded-lg">
+          <h2 className="text-xl sm:text-2xl font-bold">Analytics and Reports</h2>
+          <p className="text-green-100 mt-1 text-sm sm:text-base">Track performance, revenue, and customer insights</p>
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {["Today", "Week", "Month", "Year"].map((filter) => (
             <Button
               key={filter}
-              className={`px-6 py-2 rounded-lg ${
+              className={`px-4 sm:px-6 py-2 rounded-lg text-sm ${
                 timeFilter === filter
                   ? "bg-[#9CAF88] text-black"
                   : "bg-gray-200 text-gray-700"
@@ -209,7 +211,7 @@ function Analytics() {
         </div>
 
         {/* Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           {renderAnalyticsCard(
             "Total Revenue",
             `₱${currentData.totalRevenue.toFixed(2)}`,
@@ -238,20 +240,20 @@ function Analytics() {
         </div>
 
         {/* Revenue Trend */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <div
-            className="bg-white p-6 rounded-lg shadow relative"
+            className="bg-white p-4 sm:p-6 rounded-lg shadow relative"
             onMouseLeave={handleMouseLeave}
           >
-            <h3 className="text-xl font-bold mb-4">Revenue Trend</h3>
-            <div className="space-y-4">
+            <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Revenue Trend</h3>
+            <div className="space-y-3 sm:space-y-4">
               {currentData.revenueTrend.map((item, index) => {
                 const percentage = (item.value / maxValue) * 100;
                 const isSelected = selectedBar === index;
                 return (
                   <div
                     key={index}
-                    className={`flex items-center gap-4 cursor-pointer transition-all duration-300 ${
+                    className={`flex items-center gap-2 sm:gap-4 cursor-pointer transition-all duration-300 ${
                       isSelected ? "bg-green-50 p-2 rounded-xl" : ""
                     }`}
                     onClick={() => {
@@ -260,8 +262,8 @@ function Analytics() {
                     }}
                     onMouseMove={(e) => handleMouseMove(e, item)}
                   >
-                    <span className="w-16 text-sm">{item.day}</span>
-                    <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
+                    <span className="w-12 sm:w-16 text-xs sm:text-sm flex-shrink-0">{item.day}</span>
+                    <div className="flex-1 bg-gray-200 rounded-full h-3 sm:h-4 overflow-hidden min-w-0">
                       <div
                         style={{ width: `${percentage}%` }}
                         className={`h-full rounded-full transition-all duration-300 ${
@@ -269,7 +271,7 @@ function Analytics() {
                         }`}
                       ></div>
                     </div>
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">
                       ₱{item.value.toLocaleString()}
                     </span>
                   </div>
@@ -294,20 +296,20 @@ function Analytics() {
           </div>
 
           {/* Top Selling Items */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-bold mb-4">Top Selling Items</h3>
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+            <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Top Selling Items</h3>
             {currentData.topSellingItems.map((item, index) => (
-              <div key={index} className="flex items-center gap-4 py-2">
-                <span className="text-lg font-bold text-gray-500">
+              <div key={index} className="flex items-center gap-2 sm:gap-4 py-2">
+                <span className="text-base sm:text-lg font-bold text-gray-500 flex-shrink-0">
                   {index + 1}.
                 </span>
-                <div className="flex-1">
-                  <h4 className="font-semibold">{item.name}</h4>
-                  <span className="text-sm text-gray-500">
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-semibold text-sm sm:text-base truncate">{item.name}</h4>
+                  <span className="text-xs sm:text-sm text-gray-500">
                     {item.quantity} orders
                   </span>
                 </div>
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-200 rounded-full h-2 min-w-[60px]">
                   <div
                     style={{
                       width: `${
@@ -325,29 +327,29 @@ function Analytics() {
         </div>
 
         {/* Performance Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-bold mb-2">Best Performance</h3>
-            <p className="text-2xl font-semibold">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+            <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2">Best Performance</h3>
+            <p className="text-xl sm:text-2xl font-semibold">
               {currentData.bestPerformance.orders} orders
             </p>
-            <p className="text-sm text-gray-500 mt-1">Based on this period</p>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">Based on this period</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-bold mb-2">Highest Revenue</h3>
-            <p className="text-2xl font-semibold">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+            <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2">Highest Revenue</h3>
+            <p className="text-xl sm:text-2xl font-semibold">
               ₱{currentData.highestRevenue.amount.toFixed(2)}
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
               From a single transaction
             </p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-bold mb-2">Growth Rate</h3>
-            <p className="text-2xl font-semibold text-green-500">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+            <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2">Growth Rate</h3>
+            <p className="text-xl sm:text-2xl font-semibold text-green-500">
               +{currentData.growthRate.percentage}%
             </p>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
               Compared to previous period
             </p>
           </div>
@@ -356,19 +358,19 @@ function Analytics() {
 
       {/* MODAL */}
       {showModal && selectedBar !== null && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 animate-fade-in">
-          <div className="bg-white p-6 rounded-xl shadow-lg w-[400px]">
-            <h3 className="text-xl font-bold mb-4 text-[#6A972E]">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 animate-fade-in p-4">
+          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg w-full max-w-[400px]">
+            <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-[#6A972E]">
               Revenue Details
             </h3>
-            <p className="text-gray-700 mb-2">
+            <p className="text-sm sm:text-base text-gray-700 mb-2">
               <strong>Period:</strong> {currentData.revenueTrend[selectedBar].day}
             </p>
-            <p className="text-gray-700 mb-2">
+            <p className="text-sm sm:text-base text-gray-700 mb-2">
               <strong>Revenue:</strong> ₱
               {currentData.revenueTrend[selectedBar].value.toLocaleString()}
             </p>
-            <p className="text-gray-700 mb-4">
+            <p className="text-sm sm:text-base text-gray-700 mb-4">
               <strong>Performance:</strong>{" "}
               {(
                 (currentData.revenueTrend[selectedBar].value / maxValue) *
@@ -377,7 +379,7 @@ function Analytics() {
               % of the highest revenue in this {timeFilter.toLowerCase()}.
             </p>
             <Button
-              className="w-full bg-[#6A972E] text-white"
+              className="w-full bg-[#6A972E] text-white text-sm sm:text-base"
               onClick={() => setShowModal(false)}
             >
               Close

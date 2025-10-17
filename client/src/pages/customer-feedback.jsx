@@ -129,45 +129,47 @@ export default function CustomerFeedback() {
     <SharedSidebar>
       {/* Top Header */}
       <header className="bg-white shadow-sm border-b">
-        <div className="px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-semibold text-gray-900">Customer Feedback</h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input 
-                placeholder="Search" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 w-80 border border-gray-300 rounded-md px-3 py-2"
-              />
+        <div className="px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900">Customer Feedback</h1>
             </div>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="relative flex-1 sm:flex-initial">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input 
+                  placeholder="Search" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 w-full sm:w-60 md:w-80 border border-gray-300 rounded-md px-3 py-2 text-sm"
+                />
+              </div>
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="p-6 space-y-4">
+      <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
         {/* Page Header */}
-        <div className="bg-[#6B8E23] text-white p-6 rounded-lg">
-          <h2 className="text-2xl font-bold">Customer Feedback</h2>
-          <p className="text-green-100 mt-1">Review and analyze customer comments and ratings</p>
+        <div className="bg-[#6B8E23] text-white p-4 sm:p-6 rounded-lg">
+          <h2 className="text-xl sm:text-2xl font-bold">Customer Feedback</h2>
+          <p className="text-green-100 mt-1 text-sm sm:text-base">Review and analyze customer comments and ratings</p>
         </div>
 
         <RatingDistribution distribution={distribution} />
 
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="flex flex-col md:flex-row gap-3 sm:gap-4 items-start md:items-center justify-between">
           <FilterPills
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}
             counts={counts}
           />
-          <div className="flex gap-2 w-full sm:w-auto">
+          <div className="flex gap-2 w-full md:w-auto">
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-40" data-testid="select-sort">
+              <SelectTrigger className="w-full sm:w-40 text-sm" data-testid="select-sort">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -181,8 +183,8 @@ export default function CustomerFeedback() {
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold mb-4">Customer Review</h2>
-          <div className="space-y-4">
+          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Customer Review</h2>
+          <div className="space-y-3 sm:space-y-4">
             {filteredAndSortedFeedback.length > 0 ? (
               filteredAndSortedFeedback.map((feedback) => (
                 <FeedbackCard

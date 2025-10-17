@@ -45,13 +45,13 @@ function HourInputRow({ day, times, handleHourChange }) {
   else if (duration !== "Set Times") badgeClass = "bg-[#E6F4D2] text-[#6A972E] font-bold";
 
   return (
-    // Adjusted grid layout for better alignment
-    <div className="grid grid-cols-[1fr,1.5fr,1.5fr,1fr] items-center gap-4 py-3 border-b last:border-b-0 px-4 sm:px-6">
+    // Responsive grid layout: stacks on mobile, grid on larger screens
+    <div className="flex flex-col sm:grid sm:grid-cols-[1fr,1.5fr,1.5fr,1fr] items-start sm:items-center gap-3 sm:gap-4 py-4 sm:py-3 border-b last:border-b-0 px-3 sm:px-4 lg:px-6">
       {/* Day + Closed Switch */}
-      <div className="flex items-center gap-2">
-        <span className="font-semibold text-gray-800">{day}</span>
+      <div className="flex items-center justify-between w-full sm:w-auto gap-2">
+        <span className="font-semibold text-gray-800 text-sm sm:text-base">{day}</span>
         <Switch
-          checked={!isClosed} // Note the logical inversion for the visual state
+          checked={!isClosed}
           onCheckedChange={(checked) =>
             handleHourChange(day, "status", checked ? "Open" : "Closed")
           }
@@ -59,26 +59,29 @@ function HourInputRow({ day, times, handleHourChange }) {
         />
       </div>
 
-      {/* Open Time */}
-      <Input
-        type="time"
-        value={times.open}
-        onChange={(e) => handleHourChange(day, "open", e.target.value)}
-        className="w-full"
-        disabled={isClosed}
-      />
+      {/* Time inputs - side by side on mobile */}
+      <div className="flex gap-2 w-full sm:contents">
+        {/* Open Time */}
+        <Input
+          type="time"
+          value={times.open}
+          onChange={(e) => handleHourChange(day, "open", e.target.value)}
+          className="w-full text-sm"
+          disabled={isClosed}
+        />
 
-      {/* Close Time */}
-      <Input
-        type="time"
-        value={times.close}
-        onChange={(e) => handleHourChange(day, "close", e.target.value)}
-        className="w-full"
-        disabled={isClosed}
-      />
+        {/* Close Time */}
+        <Input
+          type="time"
+          value={times.close}
+          onChange={(e) => handleHourChange(day, "close", e.target.value)}
+          className="w-full text-sm"
+          disabled={isClosed}
+        />
+      </div>
 
       {/* Duration */}
-      <div className={`px-3 py-1 text-sm text-center rounded-full ${badgeClass}`}>
+      <div className={`px-2 sm:px-3 py-1 text-xs sm:text-sm text-center rounded-full w-full sm:w-auto ${badgeClass}`}>
         {duration}
       </div>
     </div>
@@ -146,34 +149,34 @@ export default function SettingsPage() {
   return (
     <SharedSidebar>
       <div className="min-h-screen bg-gray-50">
-        <div className="bg-white border-b px-6 py-4">
-          <h1 className="text-xl font-bold text-gray-900">Settings</h1>
-          <p className="text-sm text-gray-500">Welcome back, Staff Name</p>
+        <div className="bg-white border-b px-4 sm:px-6 py-3 sm:py-4">
+          <h1 className="text-lg sm:text-xl font-bold text-gray-900">Settings</h1>
+          <p className="text-xs sm:text-sm text-gray-500">Welcome back, Staff Name</p>
         </div>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <div className="bg-white rounded-lg shadow-xl">
-            <div className="border-b px-6 flex gap-6">
+            <div className="border-b px-3 sm:px-6 flex gap-3 sm:gap-6 overflow-x-auto">
               {tabs.map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
                   onClick={() => setActiveTab(id)}
-                  className={`flex items-center gap-2 py-4 px-2 border-b-2 font-medium ${
+                  className={`flex items-center gap-2 py-3 sm:py-4 px-2 border-b-2 font-medium whitespace-nowrap text-sm sm:text-base ${
                     activeTab === id
                       ? "border-[#6A972E] text-[#6A972E]"
                       : "border-transparent text-gray-500 hover:text-gray-700"
                   }`}
                 >
-                  <Icon className="h-5 w-5" /> {label}
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5" /> {label}
                 </button>
               ))}
             </div>
 
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {activeTab === "hours" && (
                 <div>
-                  <h2 className="text-xl font-semibold mb-4">Store Operating Hours</h2>
-                  <div className="border rounded-lg divide-y divide-gray-200">
+                  <h2 className="text-base sm:text-lg lg:text-xl font-semibold mb-3 sm:mb-4">Store Operating Hours</h2>
+                  <div className="border rounded-lg divide-y divide-gray-200 overflow-hidden">
                     {Object.entries(hours).map(([day, times]) => (
                       <HourInputRow
                         key={day}
@@ -188,9 +191,9 @@ export default function SettingsPage() {
 
               {activeTab === "staff" && (
                 <div>
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold">Staff Management</h2>
-                    <Button onClick={() => setIsAddModalOpen(true)} className="bg-[#6A972E] text-white">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
+                    <h2 className="text-base sm:text-lg lg:text-xl font-semibold">Staff Management</h2>
+                    <Button onClick={() => setIsAddModalOpen(true)} className="bg-[#6A972E] text-white text-sm sm:text-base w-full sm:w-auto">
                       + Add Staff
                     </Button>
                   </div>
@@ -199,25 +202,25 @@ export default function SettingsPage() {
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium">Name</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium">Role</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium">Email</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium">Status</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium">Actions</th>
+                          <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium whitespace-nowrap">Name</th>
+                          <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium whitespace-nowrap">Role</th>
+                          <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium whitespace-nowrap">Email</th>
+                          <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium whitespace-nowrap">Status</th>
+                          <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium whitespace-nowrap">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
                         {staff.map((s) => (
                           <tr key={s.id}>
-                            <td className="px-6 py-4">{s.name}</td>
-                            <td className="px-6 py-4">{s.role}</td>
-                            <td className="px-6 py-4">{s.email}</td>
-                            <td className="px-6 py-4">
+                            <td className="px-3 sm:px-6 py-3 sm:py-4 text-sm whitespace-nowrap">{s.name}</td>
+                            <td className="px-3 sm:px-6 py-3 sm:py-4 text-sm whitespace-nowrap">{s.role}</td>
+                            <td className="px-3 sm:px-6 py-3 sm:py-4 text-sm whitespace-nowrap">{s.email}</td>
+                            <td className="px-3 sm:px-6 py-3 sm:py-4">
                               <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                                 {s.status}
                               </span>
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-3 sm:px-6 py-3 sm:py-4">
                               <Button
                                 variant="ghost"
                                 size="icon"
@@ -234,40 +237,43 @@ export default function SettingsPage() {
                   </div>
 
                   {isAddModalOpen && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-                        <h3 className="text-lg font-semibold mb-4">Add New Staff</h3>
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
+                      <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 w-full max-w-md mx-4">
+                        <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Add New Staff</h3>
                         <div className="space-y-3">
                           <Input
                             placeholder="Name"
                             value={newStaff.name}
                             onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
+                            className="text-sm"
                           />
                           <Input
                             placeholder="Role"
                             value={newStaff.role}
                             onChange={(e) => setNewStaff({ ...newStaff, role: e.target.value })}
+                            className="text-sm"
                           />
                           <Input
                             placeholder="Email"
                             type="email"
                             value={newStaff.email}
                             onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
+                            className="text-sm"
                           />
                           <select
                             value={newStaff.status}
                             onChange={(e) => setNewStaff({ ...newStaff, status: e.target.value })}
-                            className="border rounded p-2 w-full"
+                            className="border rounded p-2 w-full text-sm"
                           >
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                           </select>
                         </div>
-                        <div className="flex justify-end gap-3 mt-6">
-                          <Button variant="ghost" onClick={() => setIsAddModalOpen(false)}>
+                        <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 mt-4 sm:mt-6">
+                          <Button variant="ghost" onClick={() => setIsAddModalOpen(false)} className="w-full sm:w-auto text-sm">
                             Cancel
                           </Button>
-                          <Button className="bg-[#6A972E] hover:bg-green-700 text-white" onClick={handleAddStaff}>
+                          <Button className="bg-[#6A972E] hover:bg-green-700 text-white w-full sm:w-auto text-sm" onClick={handleAddStaff}>
                             Save
                           </Button>
                         </div>
@@ -278,11 +284,11 @@ export default function SettingsPage() {
               )}
 
               {activeTab === "notifications" && (
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold">Notification Settings</h2>
+                <div className="space-y-3 sm:space-y-4">
+                  <h2 className="text-base sm:text-lg lg:text-xl font-semibold">Notification Settings</h2>
                   {Object.entries(notifications).map(([key, value]) => (
-                    <div key={key} className="flex justify-between items-center py-2 border-b">
-                      <span className="capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
+                    <div key={key} className="flex justify-between items-center py-3 sm:py-2 border-b">
+                      <span className="capitalize text-sm sm:text-base">{key.replace(/([A-Z])/g, " $1")}</span>
                       <Switch
                         checked={value}
                         onCheckedChange={(checked) => setNotifications((prev) => ({ ...prev, [key]: checked }))}
@@ -293,8 +299,8 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              <div className="mt-8 pt-4 border-t flex justify-end">
-                <Button onClick={handleSaveChanges} className="bg-[#6A972E] text-white px-8 py-2.5">
+              <div className="mt-6 sm:mt-8 pt-4 border-t flex justify-end">
+                <Button onClick={handleSaveChanges} className="bg-[#6A972E] text-white px-6 sm:px-8 py-2 sm:py-2.5 text-sm sm:text-base w-full sm:w-auto">
                   Save Changes
                 </Button>
               </div>

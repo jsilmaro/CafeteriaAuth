@@ -101,48 +101,50 @@ export default function HomePage() {
     <SharedSidebar>
         {/* Top Header */}
         <header className="bg-white shadow-sm border-b">
-          <div className="px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-semibold text-gray-900">FASPeCC</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input 
-                  placeholder="Search" 
-                  className="pl-10 w-80"
-                  data-testid="input-search"
-                />
+          <div className="px-4 sm:px-6 py-3 sm:py-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">FASPeCC</h1>
               </div>
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center space-x-2 sm:space-x-4">
+                <div className="relative flex-1 sm:flex-initial">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input 
+                    placeholder="Search" 
+                    className="pl-10 w-full sm:w-60 md:w-80"
+                    data-testid="input-search"
+                  />
+                </div>
+                <Button variant="outline" size="sm">
+                  <Filter className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </header>
 
         {/* Dashboard Content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {/* Page Header */}
-          <div className="mb-8 p-6 rounded-lg text-white" style={{backgroundColor: 'var(--accent-green)'}}>
-            <h2 className="text-2xl font-semibold">Seller Dashboard</h2>
-            <p className="text-white/90 mt-1">Manage your cafeteria operations and track performance</p>
+          <div className="mb-6 sm:mb-8 p-4 sm:p-6 rounded-lg text-white" style={{backgroundColor: 'var(--accent-green)'}}>
+            <h2 className="text-xl sm:text-2xl font-semibold">Seller Dashboard</h2>
+            <p className="text-white/90 mt-1 text-sm sm:text-base">Manage your cafeteria operations and track performance</p>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
             {stats.map((stat) => {
               const Icon = stat.icon;
               return (
                 <Card key={stat.label} className="bg-white border border-gray-200">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-                        <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
+                  <CardContent className="p-3 sm:p-4 lg:p-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-2">
+                      <div className="flex-1">
+                        <p className="text-xs sm:text-sm text-gray-600 mb-1">{stat.label}</p>
+                        <p className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900">{stat.value}</p>
                       </div>
-                      <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                        <Icon className="h-6 w-6 text-gray-600" />
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                        <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-600" />
                       </div>
                     </div>
                   </CardContent>
@@ -153,33 +155,33 @@ export default function HomePage() {
 
           {/* Recent Orders Table */}
           <Card className="bg-white">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">Recent Orders</CardTitle>
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="text-base sm:text-lg font-semibold">Recent Orders</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0 sm:p-6 sm:pt-0">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader style={{backgroundColor: '#E5E7A3'}}>
                     <TableRow>
-                      <TableHead className="font-semibold text-gray-700">Order ID</TableHead>
-                      <TableHead className="font-semibold text-gray-700">Student Name</TableHead>
-                      <TableHead className="font-semibold text-gray-700">ID</TableHead>
-                      <TableHead className="font-semibold text-gray-700">Total Price</TableHead>
-                      <TableHead className="font-semibold text-gray-700">Order Date</TableHead>
-                      <TableHead className="font-semibold text-gray-700">Status</TableHead>
+                      <TableHead className="font-semibold text-gray-700 text-xs sm:text-sm whitespace-nowrap">Order ID</TableHead>
+                      <TableHead className="font-semibold text-gray-700 text-xs sm:text-sm whitespace-nowrap">Student Name</TableHead>
+                      <TableHead className="font-semibold text-gray-700 text-xs sm:text-sm whitespace-nowrap">ID</TableHead>
+                      <TableHead className="font-semibold text-gray-700 text-xs sm:text-sm whitespace-nowrap">Total Price</TableHead>
+                      <TableHead className="font-semibold text-gray-700 text-xs sm:text-sm whitespace-nowrap">Order Date</TableHead>
+                      <TableHead className="font-semibold text-gray-700 text-xs sm:text-sm whitespace-nowrap">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {recentOrders.map((order) => (
                       <TableRow key={order.id} className="hover:bg-gray-50">
-                        <TableCell className="font-medium">{order.id}</TableCell>
-                        <TableCell>{order.user.fullName}</TableCell>
-                        <TableCell>{order.user.studentId}</TableCell>
-                        <TableCell>₱{order.totalPrice}</TableCell>
-                        <TableCell>{formatDate(order.createdAt)}</TableCell>
+                        <TableCell className="font-medium text-xs sm:text-sm">{order.id}</TableCell>
+                        <TableCell className="text-xs sm:text-sm whitespace-nowrap">{order.user.fullName}</TableCell>
+                        <TableCell className="text-xs sm:text-sm">{order.user.studentId}</TableCell>
+                        <TableCell className="text-xs sm:text-sm whitespace-nowrap">₱{order.totalPrice}</TableCell>
+                        <TableCell className="text-xs sm:text-sm whitespace-nowrap">{formatDate(order.createdAt)}</TableCell>
                         <TableCell>
                           <span className={cn(
-                            "px-2 py-1 rounded-full text-xs font-medium",
+                            "px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap",
                             getStatusColor(order.status)
                           )}>
                             {formatStatus(order.status)}
