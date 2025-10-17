@@ -1,6 +1,8 @@
 import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+import PropTypes from "prop-types";
+
 function FilterPills({ activeFilter, onFilterChange, counts }) {
   const filters = [
     { value: "all", label: "All", stars: null },

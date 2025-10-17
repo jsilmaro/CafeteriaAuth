@@ -9,14 +9,14 @@ export default function FoodCard({
   name,
   description,
   price,
-  availability: _availability,
-  amountOfStock,
+  availability,
+  stockLimit,
   photoURL,
   onEdit,
 }) {
   const getStockStatus = () => {
-    if (amountOfStock === 0) return { label: "Sold Out", color: "bg-red-100 text-red-700" };
-    if (amountOfStock <= 5) return { label: "Low Stock", color: "bg-yellow-100 text-yellow-700" };
+    if (stockLimit === 0) return { label: "Sold Out", color: "bg-red-100 text-red-700" };
+    if (stockLimit <= 5) return { label: "Low Stock", color: "bg-yellow-100 text-yellow-700" };
     return { label: "Available", color: "bg-green-100 text-green-700" };
   };
 
@@ -42,7 +42,7 @@ export default function FoodCard({
         <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
         <div className="flex items-center justify-between">
           <span className="text-xl font-bold text-[#6A972E]">{`₱${parseFloat(price.replace(/[^0-9.]/g, '')).toFixed(2)}`}</span>
-          <span className="text-sm text-gray-500">Stock: {amountOfStock}</span>
+          <span className="text-sm text-gray-500">Stock: {stockLimit}</span>
         </div>
       </CardContent>
       
