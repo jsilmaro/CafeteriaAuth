@@ -12,31 +12,44 @@ export default function OrderManagementPage() {
   
   const { orders, isLoading, error, updateOrderMutation, refetch } = useOrders();
 
+  // 🧩 Normalize frontend status names to match backend enum
+  const normalizeStatus = (status) => {
+    const map = {
+      Pending: "pending",
+      Preparing: "preparing",
+      Ready: "ready",
+      Completed: "picked_up",
+      Cancelled: "rejected",
+    };
+    return map[status] || status.toLowerCase();
+  };
+
   const statusOptions = ['Pending', 'Preparing', 'Ready', 'Completed', 'Cancelled'];
 
   const handleAccept = (orderId) => {
     updateOrderMutation.mutate({ 
       id: orderId, 
-      updates: { status: 'Preparing' } 
+      status: normalizeStatus('Preparing') 
     });
   };
 
   const handleReject = (orderId) => {
     updateOrderMutation.mutate({ 
       id: orderId, 
-      updates: { status: 'Cancelled' } 
+      status: normalizeStatus('Cancelled') 
     });
   };
 
   const handleMarkAsReady = (orderId) => {
     updateOrderMutation.mutate({ 
       id: orderId, 
-      updates: { status: 'Ready' } 
+      status: normalizeStatus('Ready') 
     });
   };
+
   // Filter orders by status and search query
   const filteredOrders = orders.filter(order => {
-    const matchesStatus = statusFilter === 'All' || order.status === statusFilter;
+    const matchesStatus = statusFilter === 'All' || normalizeStatus(order.status) === normalizeStatus(statusFilter);
     const matchesSearch = !searchQuery || 
       order.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       order.studentId.includes(searchQuery) ||

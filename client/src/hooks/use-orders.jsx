@@ -1,157 +1,118 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "./use-toast";
-
-// Mock orders data
-const initialMockOrders = [
-  {
-    id: "ORD-001",
-    studentName: "Jennie Kim",
-    studentId: "2023300123",
-    items: [
-      { name: "Chicken Adobo", quantity: 1, price: 85.00 },
-      { name: "Rice", quantity: 1, price: 15.00 },
-      { name: "Lumpia", quantity: 1, price: 45.00 }
-    ],
-    total: 145.00,
-    status: "Pending",
-    pickupTime: "3:15 PM",
-    orderTime: "3:00 PM",
-    paymentMethod: "G-Cash"
-  },
-  {
-    id: "ORD-002",
-    studentName: "Maria Santos",
-    studentId: "2023300124",
-    items: [
-      { name: "Chicken Adobo", quantity: 1, price: 85.00 },
-      { name: "Rice", quantity: 1, price: 15.00 },
-      { name: "Lumpia", quantity: 1, price: 45.00 }
-    ],
-    total: 145.00,
-    status: "Pending",
-    pickupTime: "3:15 PM",
-    orderTime: "3:00 PM",
-    paymentMethod: "G-Cash"
-  },
-  {
-    id: "ORD-003",
-    studentName: "Juan Dela Cruz",
-    studentId: "2023300125",
-    items: [
-      { name: "Beef Steak", quantity: 1, price: 95.00 },
-      { name: "Rice", quantity: 1, price: 15.00 }
-    ],
-    total: 110.00,
-    status: "Preparing",
-    pickupTime: "3:30 PM",
-    orderTime: "3:10 PM",
-    paymentMethod: "Cash"
-  },
-  {
-    id: "ORD-004",
-    studentName: "Ana Rodriguez",
-    studentId: "2023300126",
-    items: [
-      { name: "Pork Sisig", quantity: 1, price: 75.00 },
-      { name: "Rice", quantity: 2, price: 30.00 }
-    ],
-    total: 105.00,
-    status: "Ready",
-    pickupTime: "3:45 PM",
-    orderTime: "3:20 PM",
-    paymentMethod: "G-Cash"
-  }
-];
+import api from "../lib/api"; // ✅ axios instance
 
 export function useOrders() {
   const { toast } = useToast();
-  const [orders, setOrders] = useState(initialMockOrders);
-  const [isLoading] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [error, setError] = useState(null);
 
-  const refetch = () => {
-    // TODO: backend integration - refetch orders from API
-    console.log('Refetching orders...');
-    setOrders([...initialMockOrders]);
+  // 🟢 Fetch all orders (based on role)
+  const fetchOrders = async () => {
+    try {
+      setIsLoading(true);
+      const response = await api.get("/orders");
+
+      const formattedOrders = response.data.map(order => ({
+        id: order.id,
+        studentName: order.user?.fullName || "Unknown",
+        studentId: order.user?.studentId || order.userId,
+        paymentMethod:
+          order.paymentStatus === "cash_on_pickup"
+            ? "Cash on Pickup"
+            : order.paymentStatus,
+        status: order.status.charAt(0).toUpperCase() + order.status.slice(1),
+        pickupTime: order.pickupTime
+          ? new Date(order.pickupTime).toLocaleString()
+          : "Not set",
+        orderTime: new Date(order.createdAt).toLocaleString(),
+        items: order.orderItems?.map(oi => ({
+          name: oi.item?.name || "Unknown Item",
+          quantity: oi.quantity,
+          price: Number(oi.priceAtOrder || 0),
+        })) || [],
+        total: Number(order.totalPrice || 0),
+      }));
+
+      setOrders(formattedOrders);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError(err.response?.data?.error || err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const refetch = fetchOrders;
+
+  // 🧾 Update order status (for staff/admin)
   const updateOrderMutation = {
-    mutate: ({ id, updates }) => {
-      setIsUpdating(true);
-      // TODO: backend integration - replace with actual API call
-      console.log('Updating order:', id, updates);
-      
-      // Simulate API delay
-      setTimeout(() => {
-        setOrders(prevOrders => 
-          prevOrders.map(order => 
-            order.id === id ? { ...order, ...updates } : order
-          )
+    mutate: async ({ id, status }) => {
+      try {
+        setIsUpdating(true);
+        const res = await api.put(`/orders/${id}/status`, { status });
+        const updated = res.data;
+
+        setOrders((prev) =>
+          prev.map((order) => (order.id === id ? { ...order, ...updated } : order))
         );
-        setIsUpdating(false);
-        
+
         toast({
           title: "Order updated",
-          description: "Order status has been updated successfully.",
+          description: `Order ${id} marked as ${status}`,
         });
-      }, 500);
+      } catch (err) {
+        console.error("❌ Update order error:", err);
+        toast({
+          title: "Failed to update order",
+          description: err.response?.data?.error || err.message,
+          variant: "destructive",
+        });
+      } finally {
+        setIsUpdating(false);
+      }
     },
-    isPending: isUpdating
+    isPending: isUpdating,
   };
 
+  // 🗑️ Delete order (staff/admin)
   const deleteOrderMutation = {
-    mutate: (id) => {
-      setIsUpdating(true);
-      // TODO: backend integration - replace with actual API call
-      console.log('Deleting order:', id);
-      
-      // Simulate API delay
-      setTimeout(() => {
-        setOrders(prevOrders => prevOrders.filter(order => order.id !== id));
-        setIsUpdating(false);
-        
+    mutate: async (id) => {
+      try {
+        setIsUpdating(true);
+        await api.delete(`/orders/${id}`);
+        setOrders((prev) => prev.filter((order) => order.id !== id));
         toast({
           title: "Order deleted",
-          description: "Order has been deleted successfully.",
+          description: `Order ${id} deleted successfully.`,
         });
-      }, 500);
-    },
-    isPending: isUpdating
-  };
-
-  const createOrderMutation = {
-    mutate: (orderData) => {
-      setIsUpdating(true);
-      // TODO: backend integration - replace with actual API call
-      console.log('Creating order:', orderData);
-      
-      // Simulate API delay
-      setTimeout(() => {
-        const newOrder = {
-          ...orderData,
-          id: `ORD-${String(orders.length + 1).padStart(3, '0')}`,
-          orderTime: new Date().toLocaleTimeString(),
-        };
-        
-        setOrders(prevOrders => [...prevOrders, newOrder]);
-        setIsUpdating(false);
-        
+      } catch (err) {
+        console.error("❌ Delete order error:", err);
         toast({
-          title: "Order created",
-          description: "New order has been created successfully.",
+          title: "Failed to delete order",
+          description: err.response?.data?.error || err.message,
+          variant: "destructive",
         });
-      }, 500);
+      } finally {
+        setIsUpdating(false);
+      }
     },
-    isPending: isUpdating
+    isPending: isUpdating,
   };
 
   return {
     orders,
     isLoading,
-    error: null,
+    error,
     refetch,
     updateOrderMutation,
     deleteOrderMutation,
-    createOrderMutation,
   };
 }
