@@ -24,6 +24,8 @@ export function useOrders() {
             ? "Cash on Pickup"
             : order.paymentStatus,
         status: order.status.charAt(0).toUpperCase() + order.status.slice(1),
+        paymentConfirmed: order.paymentConfirmed, // ✅ Added this line
+        paymentStatus: order.paymentStatus,       // optional, useful for UI
         pickupTime: order.pickupTime
           ? new Date(order.pickupTime).toLocaleString()
           : "Not set",
@@ -68,6 +70,8 @@ export function useOrders() {
           title: "Order updated",
           description: `Order ${id} marked as ${status}`,
         });
+
+        return updated;
       } catch (err) {
         console.error("❌ Update order error:", err);
         toast({
