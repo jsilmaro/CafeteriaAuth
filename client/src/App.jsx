@@ -14,7 +14,6 @@ import AdminAuthPage from "./pages/admin-auth-page";
 import CafeteriaInventory from "./pages/cafeteria-inventory";
 import CustomerFeedback from "./pages/customer-feedback";
 import SettingsPage from "./pages/settings";
-import Analytics from "./pages/analytics";
 import { ProtectedRoute } from "./lib/protected-route";
 
 function Router() {
@@ -28,7 +27,6 @@ function Router() {
       <ProtectedRoute path="/admin" component={AdminPage} adminOnly={true} />
       <ProtectedRoute path="/inventory" component={CafeteriaInventory} />
       <ProtectedRoute path="/feedback" component={CustomerFeedback} /> 
-      <ProtectedRoute path="/analytics" component={Analytics} />
       <ProtectedRoute path="/settings" component={SettingsPage} />
       <Route component={NotFound} />
     </Switch>

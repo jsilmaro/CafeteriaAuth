@@ -21,7 +21,7 @@ export function useAdmin() {
         // Fetch pending staff + stats in parallel
         const [pendingRes, statsRes] = await Promise.all([
           api.get("/auth/pending-staff"),
-          api.get("/auth/staff-stats"), // <-- New endpoint in backend
+          api.get("/auth/staff-stats"),
         ]);
 
         const pending = Array.isArray(pendingRes.data) ? pendingRes.data : [];

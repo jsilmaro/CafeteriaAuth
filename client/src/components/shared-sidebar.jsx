@@ -48,7 +48,6 @@ export default function SharedSidebar({ children }) {
     { id: "orders", label: "Order Management", icon: ShoppingCart, path: "/orders", implemented: true },
     { id: "inventory", label: "Cafeteria Inventory", icon: Package, path: "/inventory", implemented: true },
     { id: "feedback", label: "Customer Feedback", icon: MessageSquare, path: "/feedback", implemented: true },
-    { id: "analytics", label: "Analytics", icon: BarChart3, path: "/analytics", implemented: true },
     { id: "settings", label: "Settings", icon: Settings, path: "/settings", implemented: true },
   ].filter(item => item.implemented); // Only show implemented routes
 
