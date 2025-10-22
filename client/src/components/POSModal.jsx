@@ -11,10 +11,12 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useOrders } from "../hooks/use-orders";
+import { useToast } from "../hooks/use-toast";
 import api from "../lib/api"; // still needed to create offline orders manually
 
 export default function POSModal({ isOpen, onClose }) {
   const { orders, isLoading, refetch } = useOrders();
+  const { toast } = useToast();
 
   const [creating, setCreating] = useState(false);
   const [newOrder, setNewOrder] = useState({
