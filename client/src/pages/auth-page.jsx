@@ -145,7 +145,7 @@ export default function AuthPage() {
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{backgroundImage: `url(${cafeteriaBg})`}}
         ></div>
-        <div className="absolute inset-0" style={{backgroundColor: 'rgba(156, 175, 136, 0.8)'}}></div>
+        <div className="absolute inset-0" style={{backgroundColor: 'rgba(83, 132, 34, 0.2)'}}></div>
         
         {/* Intro Content */}
         <div className="relative z-10 flex flex-col justify-center items-center p-6 md:p-8 lg:p-12 text-center">
