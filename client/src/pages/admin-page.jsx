@@ -5,11 +5,11 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Loader2, CheckCircle2, Users2, LogOut, BarChart3, Clock3, CheckCircle, DollarSign, Calendar, RefreshCcw, Search, Filter } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 export default function AdminPage() {
   const { user, logoutMutation } = useAuth();
-  const { pendingStaff, stats, isLoading, approveStaff, approvingId } = useAdmin();
+  const { pendingStaff, stats, analytics, isLoading, approveStaff, approvingId } = useAdmin();
 
   // Tab state
   const [activeTab, setActiveTab] = useState("overview");
@@ -28,110 +28,22 @@ export default function AdminPage() {
 
   const handleLogout = () => logoutMutation.mutate();
 
-  // --- ANALYTICS DATA ---
-  const analyticsData = {
-    Today: {
-      totalRevenue: 500.0,
-      revenueChange: 12.55,
-      totalTransactions: 50,
-      averageOrderValue: 14.8,
-      peakHours: "12-1 PM",
-      revenueTrend: [
-        { day: "Mon", value: 1800 },
-        { day: "Tue", value: 1900 },
-        { day: "Wed", value: 2200 },
-        { day: "Thu", value: 2000 },
-        { day: "Fri", value: 2500 },
-        { day: "Sat", value: 2800 },
-        { day: "Sun", value: 2600 },
-      ],
-      topSellingItems: [
-        { name: "Chicken Adobo", quantity: 45 },
-        { name: "Pancit Canton", quantity: 38 },
-        { name: "Tocino", quantity: 24 },
-      ],
-      bestPerformance: { orders: 45 },
-      highestRevenue: { amount: 576.0 },
-      growthRate: { percentage: 12.5 },
-    },
-    Week: {
-      totalRevenue: 3500.0,
-      revenueChange: 8.2,
-      totalTransactions: 250,
-      averageOrderValue: 14.0,
-      peakHours: "6-7 PM",
-      revenueTrend: [
-        { day: "Mon", value: 1800 },
-        { day: "Tue", value: 1900 },
-        { day: "Wed", value: 2200 },
-        { day: "Thu", value: 2000 },
-        { day: "Fri", value: 2500 },
-        { day: "Sat", value: 2800 },
-        { day: "Sun", value: 2600 },
-      ],
-      topSellingItems: [
-        { name: "Pancit Canton", quantity: 180 },
-        { name: "Chicken Adobo", quantity: 155 },
-        { name: "Tocino", quantity: 120 },
-      ],
-      bestPerformance: { orders: 78 },
-      highestRevenue: { amount: 1200.0 },
-      growthRate: { percentage: 8.2 },
-    },
-    Month: {
-      totalRevenue: 15000.0,
-      revenueChange: 25.0,
-      totalTransactions: 1000,
-      averageOrderValue: 15.0,
-      peakHours: "12-1 PM",
-      revenueTrend: [
-        { day: "Week 1", value: 2500 },
-        { day: "Week 2", value: 3800 },
-        { day: "Week 3", value: 4500 },
-        { day: "Week 4", value: 4200 },
-      ],
-      topSellingItems: [
-        { name: "Chicken Adobo", quantity: 600 },
-        { name: "Tocino", quantity: 550 },
-        { name: "Pancit Canton", quantity: 500 },
-      ],
-      bestPerformance: { orders: 150 },
-      highestRevenue: { amount: 3500.0 },
-      growthRate: { percentage: 25.0 },
-    },
-    Year: {
-      totalRevenue: 180000.0,
-      revenueChange: 15.0,
-      totalTransactions: 12000,
-      averageOrderValue: 15.0,
-      peakHours: "12-1 PM",
-      revenueTrend: [
-        { day: "Jan", value: 2000 },
-        { day: "Feb", value: 2500 },
-        { day: "Mar", value: 3000 },
-        { day: "Apr", value: 2800 },
-        { day: "May", value: 3200 },
-        { day: "Jun", value: 3500 },
-        { day: "Jul", value: 4000 },
-        { day: "Aug", value: 4200 },
-        { day: "Sep", value: 3800 },
-        { day: "Oct", value: 4100 },
-        { day: "Nov", value: 3900 },
-        { day: "Dec", value: 4500 },
-      ],
-      topSellingItems: [
-        { name: "Chicken Adobo", quantity: 8000 },
-        { name: "Pancit Canton", quantity: 7500 },
-        { name: "Tocino", quantity: 6800 },
-      ],
-      bestPerformance: { orders: 2000 },
-      highestRevenue: { amount: 5000.0 },
-      growthRate: { percentage: 15.0 },
-    },
-  };
+const currentData = analytics?.[timeFilter] || {
+  totalRevenue: 0,
+  totalTransactions: 0,
+  averageOrderValue: 0,
+  revenueTrend: [],
+  topSellingItems: [],
+  peakHours: "N/A",
+  bestPerformance: { orders: 0 },
+  highestRevenue: { amount: 0 },
+  growthRate: { percentage: 0 },
+};
 
-  const currentData = analyticsData[timeFilter];
-  const maxValue = Math.max(...currentData.revenueTrend.map((item) => item.value));
+const maxValue =
+  currentData.revenueTrend && currentData.revenueTrend.length > 0
+    ? Math.max(...currentData.revenueTrend.map((item) => item.value))
+    : 0;
 
   // --- HOVER TOOLTIP ---
   const handleMouseMove = (e, item) => {
@@ -166,6 +78,12 @@ export default function AdminPage() {
       </div>
     </div>
   );
+
+  // Add this before rendering analytics cards
+  const peakDay = currentData.revenueTrend.length
+    ? currentData.revenueTrend.reduce((a, b) => (a.value > b.value ? a : b)).day
+    : "N/A";
+
 
   if (isLoading) {
     return (
@@ -245,7 +163,7 @@ export default function AdminPage() {
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6 pt-0">
                   <div className="text-2xl sm:text-3xl font-bold text-gray-900">
-                    {stats?.totalStaff || 0}
+                    {stats.total}
                   </div>
                   <p className="text-xs sm:text-sm text-gray-500 mt-1">
                     Active staff members
@@ -262,7 +180,7 @@ export default function AdminPage() {
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6 pt-0">
                   <div className="text-2xl sm:text-3xl font-bold text-gray-900">
-                    {stats?.pendingStaff || 0}
+                    {stats.pending}
                   </div>
                   <p className="text-xs sm:text-sm text-gray-500 mt-1">
                     Awaiting approval
@@ -279,7 +197,7 @@ export default function AdminPage() {
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6 pt-0">
                   <div className="text-2xl sm:text-3xl font-bold text-gray-900">
-                    {stats?.approvedStaff || 0}
+                    {stats.approved}
                   </div>
                   <p className="text-xs sm:text-sm text-gray-500 mt-1">
                     Successfully approved
@@ -407,7 +325,7 @@ export default function AdminPage() {
                 <div className="space-y-3 sm:space-y-4">
                   {currentData.revenueTrend.map((item, index) => {
                     const percentage = (item.value / maxValue) * 100;
-                    const isSelected = selectedBar === index;
+                    const isSelected = selectedBar === index && item.value > 0;
                     return (
                       <div
                         key={index}
@@ -415,8 +333,10 @@ export default function AdminPage() {
                           isSelected ? "bg-green-50 p-2 rounded-xl" : ""
                         }`}
                         onClick={() => {
-                          setSelectedBar(index);
-                          setShowModal(true);
+                          if (item.value > 0) {      // Only open modal if value > 0
+                            setSelectedBar(index);
+                            setShowModal(true);
+                          }
                         }}
                         onMouseMove={(e) => handleMouseMove(e, item)}
                       >
@@ -489,14 +409,14 @@ export default function AdminPage() {
               <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2">Best Performance</h3>
                 <p className="text-xl sm:text-2xl font-semibold">
-                  {currentData.bestPerformance.orders} orders
+                  {currentData.revenueTrend?.[0]?.day || "N/A"} orders
                 </p>
                 <p className="text-xs sm:text-sm text-gray-500 mt-1">Based on this period</p>
               </div>
               <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2">Highest Revenue</h3>
                 <p className="text-xl sm:text-2xl font-semibold">
-                  ₱{currentData.highestRevenue.amount.toFixed(2)}
+                  ₱{(Math.max(...currentData.revenueTrend.map(r => r.value)) || 0).toFixed(2)}
                 </p>
                 <p className="text-xs sm:text-sm text-gray-500 mt-1">
                   From a single transaction
@@ -505,7 +425,7 @@ export default function AdminPage() {
               <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
                 <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2">Growth Rate</h3>
                 <p className="text-xl sm:text-2xl font-semibold text-green-500">
-                  +{currentData.growthRate.percentage}%
+                  +{currentData.revenueChange || 0}%
                 </p>
                 <p className="text-xs sm:text-sm text-gray-500 mt-1">
                   Compared to previous period
