@@ -5,11 +5,14 @@ import { Card, CardContent } from '../components/ui/card';
 import { Filter, Search, Loader2 } from 'lucide-react';
 import { useOrders } from '../hooks/use-orders';
 import SharedSidebar from "../components/shared-sidebar";
+import ProcessPaymentModal from "@/components/ProcessPaymentModal";
 
 export default function OrderManagementPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('Pending');
-  
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+
   const { orders, isLoading, error, updateOrderMutation, refetch } = useOrders();
 
   // 🧩 Normalize frontend status names to match backend enum
@@ -22,6 +25,37 @@ export default function OrderManagementPage() {
       Cancelled: "rejected",
     };
     return map[status] || status.toLowerCase();
+  };
+
+  const handleProcessPayment = (order) => {
+    setSelectedOrder(order);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handlePaymentSuccess = async () => {
+    if (!selectedOrder) return;
+
+    // ✅ Update order status to completed (picked_up)
+    updateOrderMutation.mutate(
+      { id: selectedOrder.id, status: normalizeStatus("Completed") },
+      {
+        onSuccess: () => {
+          refetch(); // refresh order list
+          setIsPaymentModalOpen(false);
+          setSelectedOrder(null);
+        },
+        onError: (err) => {
+          console.error("Failed to update order:", err);
+        },
+      }
+    );
+
+    // ✅ Refetch order list so it disappears from “Ready”
+    refetch();
+
+    // ✅ Close modal
+    setIsPaymentModalOpen(false);
+    setSelectedOrder(null);
   };
 
   const statusOptions = ['Pending', 'Preparing', 'Ready', 'Completed', 'Cancelled'];
@@ -318,7 +352,7 @@ export default function OrderManagementPage() {
                     </div>
                   )}
 
-                  {/* Other Status Orders - Responsive design */}
+                  {/* Other Status Orders */}
                   {!['Pending', 'Preparing'].includes(order.status) && (
                     <div className="flex flex-col lg:flex-row justify-between items-start gap-4 lg:gap-0">
                       <div className="flex-1 w-full">
@@ -373,6 +407,7 @@ export default function OrderManagementPage() {
                         </div>
                       </div>
 
+                      {/* 🧩 Right side — Times + Process Payment */}
                       <div className="w-full lg:w-auto lg:ml-12 flex flex-col gap-3 sm:gap-4 lg:text-right">
                         <div>
                           <p className="text-xs sm:text-sm text-gray-600 mb-1">Pickup Time</p>
@@ -382,6 +417,32 @@ export default function OrderManagementPage() {
                           <p className="text-xs sm:text-sm text-gray-600 mb-1">Order Time</p>
                           <p className="font-medium text-gray-900 text-sm sm:text-base">{order.orderTime}</p>
                         </div>
+
+                        {/* ✅ Payment button (only visible when Ready) */}
+                        {order.status === 'Ready' && (
+                          <Button
+                            onClick={() => handleProcessPayment(order)}
+                            disabled={!order.paymentConfirmed} // 🧩 disable if not confirmed
+                            className={`mt-3 sm:mt-4 px-4 sm:px-6 py-2 rounded-lg font-medium text-sm w-full transition-all duration-200
+                              ${
+                                order.paymentConfirmed
+                                  ? "bg-green-600 hover:bg-green-700 text-white"
+                                  : "bg-gray-200 text-gray-400 cursor-not-allowed opacity-70"
+                              }`}
+                          >
+                            {order.paymentConfirmed ? "Process Payment" : "Awaiting Student Confirmation"}
+                          </Button>
+                        )}
+                        {/* Payment Details - Only for Completed Orders */}
+                        {order.status === 'Completed' && order.paymentAmountReceived != null && (
+                          <div className="mt-2 p-2 bg-gray-50 border border-gray-200 rounded-lg text-sm sm:text-base">
+                            <h4 className="font-semibold text-gray-900 mb-2">Payment Details</h4>
+                            <p><strong>Amount Received:</strong> ₱{order.paymentAmountReceived?.toFixed(2) ?? '0.00'}</p>
+                            <p><strong>Change Given:</strong> ₱{order.paymentChange?.toFixed(2) ?? '0.00'}</p>
+                            <p><strong>Transaction Time:</strong> {order.paymentTime ?? '-'}</p>
+                            <p><strong>Processed By:</strong> {order.paymentProcessedBy ?? '-'}</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -391,6 +452,16 @@ export default function OrderManagementPage() {
           )}
         </div>
       </div>
+      {/* ✅ Payment modal */}
+        <ProcessPaymentModal
+          open={isPaymentModalOpen}
+          onClose={() => {
+            setIsPaymentModalOpen(false);
+            setSelectedOrder(null);
+          }}
+          order={selectedOrder}
+          onSuccess={handlePaymentSuccess}
+        />
     </SharedSidebar>
   );
 }
