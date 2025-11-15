@@ -142,7 +142,7 @@ export default function SettingsPage() {
 
   const tabs = [
     { id: "hours", label: "Operating Hours", icon: Clock },
-    { id: "staff", label: "Staff", icon: Users },
+    // { id: "staff", label: "Staff", icon: Users },
     { id: "notifications", label: "Notification", icon: Bell },
   ];
 
@@ -188,7 +188,7 @@ export default function SettingsPage() {
                   </div>
                 </div>
               )}
-
+{/*
               {activeTab === "staff" && (
                 <div>
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
@@ -282,7 +282,7 @@ export default function SettingsPage() {
                   )}
                 </div>
               )}
-
+*/}
               {activeTab === "notifications" && (
                 <div className="space-y-3 sm:space-y-4">
                   <h2 className="text-base sm:text-lg lg:text-xl font-semibold">Notification Settings</h2>

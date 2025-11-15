@@ -14,12 +14,14 @@ import {
   Clock
 } from "lucide-react";
 import { cn } from "../lib/utils";
+import { useStats } from "../hooks/use-stats";
 import ustpLogo from "../assets/ustp-logo.png";
 import cafeteriaBg from "../assets/cafeteria-bg.jpg";
 
 export default function LandingPage() {
   const [, setLocation] = useLocation();
   const [hoveredCard, setHoveredCard] = useState(null);
+  const { data: stats, isLoading } = useStats();
 
   const handleAdminAccess = () => {
     setLocation('/admin-auth');
@@ -84,11 +86,11 @@ export default function LandingPage() {
     }
   ];
 
-  const stats = [
-    { label: 'Active Staff', value: '45', icon: Users },
-    { label: 'Daily Orders', value: '320', icon: BarChart3 },
-    { label: 'Menu Items', value: '28', icon: ChefHat },
-    { label: 'Student Users', value: '1,250', icon: BookOpen }
+  const statCards = [
+    { label: 'Active Staff', value: stats?.activeStaff ?? "–", icon: Users },
+    { label: 'Daily Orders', value: stats?.dailyOrders ?? "–", icon: BarChart3 },
+    { label: 'Menu Items', value: stats?.menuItems ?? "–", icon: ChefHat },
+    { label: 'Student Users', value: stats?.studentUsers ?? "–", icon: BookOpen }
   ];
 
   return (
@@ -132,7 +134,7 @@ export default function LandingPage() {
               
               {/* Quick Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-12 max-w-3xl mx-auto">
-                {stats.map((stat) => {
+                {statCards.map((stat) => {
                   const Icon = stat.icon;
                   return (
                     <div key={stat.label} className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
