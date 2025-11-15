@@ -28,6 +28,22 @@ export default function AdminPage() {
 
   const handleLogout = () => logoutMutation.mutate();
 
+  // Dynamic Peak Hours text based on time filter
+  const getPeakHoursText = () => {
+    switch (timeFilter) {
+      case "Today":
+        return "Peak Hours";
+      case "Week":
+        return "Peak Day";
+      case "Month":
+        return "Peak Week";
+      case "Year":
+        return "Peak Month";
+      default:
+        return "Peak Hours";
+    }
+  };
+
 const currentData = analytics?.[timeFilter] || {
   totalRevenue: 0,
   totalTransactions: 0,
@@ -79,10 +95,7 @@ const maxValue =
     </div>
   );
 
-  // Add this before rendering analytics cards
-  const peakDay = currentData.revenueTrend.length
-    ? currentData.revenueTrend.reduce((a, b) => (a.value > b.value ? a : b)).day
-    : "N/A";
+
 
 
   if (isLoading) {
@@ -308,7 +321,7 @@ const maxValue =
                 <BarChart3 size={24} color="#6A972E" />
               )}
               {renderAnalyticsCard(
-                "Peak Hours",
+                getPeakHoursText(),
                 currentData.peakHours,
                 "busiest time",
                 <Calendar size={24} color="#6A972E" />

@@ -26,7 +26,7 @@ function Router() {
       <ProtectedRoute path="/orders" component={OrderManagementPage} />
       <ProtectedRoute path="/admin" component={AdminPage} adminOnly={true} />
       <ProtectedRoute path="/inventory" component={CafeteriaInventory} />
-      <ProtectedRoute path="/feedback" component={CustomerFeedback} /> 
+      <ProtectedRoute path="/feedback" component={CustomerFeedback} />
       <ProtectedRoute path="/settings" component={SettingsPage} />
       <Route component={NotFound} />
     </Switch>
